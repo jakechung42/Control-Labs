@@ -3,29 +3,29 @@ BlinkHelloWorld.elf:     file format elf32-avr
 
 Sections:
 Idx Name          Size      VMA       LMA       File off  Algn
-  0 .data         00000000  00800100  00800100  000000d4  2**0
+  0 .data         00000000  00800100  00800100  000000ee  2**0
                   CONTENTS, ALLOC, LOAD, DATA
-  1 .text         00000080  00000000  00000000  00000054  2**1
+  1 .text         0000009a  00000000  00000000  00000054  2**1
                   CONTENTS, ALLOC, LOAD, READONLY, CODE
-  2 .comment      00000030  00000000  00000000  000000d4  2**0
+  2 .comment      00000030  00000000  00000000  000000ee  2**0
                   CONTENTS, READONLY
-  3 .note.gnu.avr.deviceinfo 00000040  00000000  00000000  00000104  2**2
+  3 .note.gnu.avr.deviceinfo 00000040  00000000  00000000  00000120  2**2
                   CONTENTS, READONLY
-  4 .debug_aranges 00000020  00000000  00000000  00000144  2**0
+  4 .debug_aranges 00000030  00000000  00000000  00000160  2**0
                   CONTENTS, READONLY, DEBUGGING
-  5 .debug_info   00000738  00000000  00000000  00000164  2**0
+  5 .debug_info   00000719  00000000  00000000  00000190  2**0
                   CONTENTS, READONLY, DEBUGGING
-  6 .debug_abbrev 0000068a  00000000  00000000  0000089c  2**0
+  6 .debug_abbrev 00000677  00000000  00000000  000008a9  2**0
                   CONTENTS, READONLY, DEBUGGING
-  7 .debug_line   00000241  00000000  00000000  00000f26  2**0
+  7 .debug_line   00000296  00000000  00000000  00000f20  2**0
                   CONTENTS, READONLY, DEBUGGING
-  8 .debug_frame  00000024  00000000  00000000  00001168  2**2
+  8 .debug_frame  00000044  00000000  00000000  000011b8  2**2
                   CONTENTS, READONLY, DEBUGGING
-  9 .debug_str    0000039f  00000000  00000000  0000118c  2**0
+  9 .debug_str    0000036d  00000000  00000000  000011fc  2**0
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_loc    00000048  00000000  00000000  0000152b  2**0
+ 10 .debug_loc    00000064  00000000  00000000  00001569  2**0
                   CONTENTS, READONLY, DEBUGGING
- 11 .debug_ranges 00000010  00000000  00000000  00001573  2**0
+ 11 .debug_ranges 00000020  00000000  00000000  000015cd  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -65,60 +65,116 @@ Disassembly of section .text:
   3a:	d4 e0       	ldi	r29, 0x04	; 4
   3c:	de bf       	out	0x3e, r29	; 62
   3e:	cd bf       	out	0x3d, r28	; 61
-  40:	02 d0       	rcall	.+4      	; 0x46 <main>
-  42:	1c c0       	rjmp	.+56     	; 0x7c <_exit>
+  40:	1b d0       	rcall	.+54     	; 0x78 <main>
+  42:	29 c0       	rjmp	.+82     	; 0x96 <_exit>
 
 00000044 <__bad_interrupt>:
   44:	dd cf       	rjmp	.-70     	; 0x0 <__vectors>
 
-00000046 <main>:
-#define sbi(var, mask)   ((var) |= (uint8_t)(1 << mask))
-#define cbi(var, mask)   ((var) &= (uint8_t)~(1 << mask))
-int main (void)
+00000046 <ioinit>:
+	return(0);
+}
+void ioinit (void)
 {
 	//1 = output, 0 = input
-	DDRC = 0b00100000; // Set Pin 5 as Output
-  46:	80 e2       	ldi	r24, 0x20	; 32
-  48:	87 b9       	out	0x07, r24	; 7
+	DDRB = 0b11111111; //All outputs
+  46:	8f ef       	ldi	r24, 0xFF	; 255
+  48:	84 b9       	out	0x04, r24	; 4
+	DDRC = 0b11111111; //All outputs
+  4a:	87 b9       	out	0x07, r24	; 7
+	DDRD = 0b11111110; //PORTD (RX on PD0)
+  4c:	8e ef       	ldi	r24, 0xFE	; 254
+  4e:	8a b9       	out	0x0a, r24	; 10
+  50:	08 95       	ret
+
+00000052 <delay_ms>:
+}
+//General short delays
+void delay_ms(uint16_t x)
+{
+  52:	ac 01       	movw	r20, r24
+	uint8_t y, z;
+	for ( ; x > 0 ; x--){
+  54:	0d c0       	rjmp	.+26     	; 0x70 <delay_ms+0x1e>
+		for ( y = 0 ; y < 90 ; y++){
+			for ( z = 0 ; z < 6 ; z++){
+				asm volatile ("nop");
+  56:	00 00       	nop
+void delay_ms(uint16_t x)
+{
+	uint8_t y, z;
+	for ( ; x > 0 ; x--){
+		for ( y = 0 ; y < 90 ; y++){
+			for ( z = 0 ; z < 6 ; z++){
+  58:	9f 5f       	subi	r25, 0xFF	; 255
+  5a:	01 c0       	rjmp	.+2      	; 0x5e <delay_ms+0xc>
+  5c:	90 e0       	ldi	r25, 0x00	; 0
+  5e:	96 30       	cpi	r25, 0x06	; 6
+  60:	d0 f3       	brcs	.-12     	; 0x56 <delay_ms+0x4>
+//General short delays
+void delay_ms(uint16_t x)
+{
+	uint8_t y, z;
+	for ( ; x > 0 ; x--){
+		for ( y = 0 ; y < 90 ; y++){
+  62:	2f 5f       	subi	r18, 0xFF	; 255
+  64:	01 c0       	rjmp	.+2      	; 0x68 <delay_ms+0x16>
+  66:	20 e0       	ldi	r18, 0x00	; 0
+  68:	2a 35       	cpi	r18, 0x5A	; 90
+  6a:	c0 f3       	brcs	.-16     	; 0x5c <delay_ms+0xa>
+}
+//General short delays
+void delay_ms(uint16_t x)
+{
+	uint8_t y, z;
+	for ( ; x > 0 ; x--){
+  6c:	41 50       	subi	r20, 0x01	; 1
+  6e:	51 09       	sbc	r21, r1
+  70:	41 15       	cp	r20, r1
+  72:	51 05       	cpc	r21, r1
+  74:	c1 f7       	brne	.-16     	; 0x66 <delay_ms+0x14>
+			for ( z = 0 ; z < 6 ; z++){
+				asm volatile ("nop");
+			}
+		}
+	}
+  76:	08 95       	ret
+
+00000078 <main>:
+void ioinit(void); //Initializes IO
+void delay_ms(uint16_t x); //General purpose delay
+//======================
+int main (void)
+{
+	ioinit(); //Setup IO pins and defaults
+  78:	e6 df       	rcall	.-52     	; 0x46 <ioinit>
 	while(1)
 	{
-		sbi(PORTC, 5); // Set pin 5 on PORTC
-  4a:	88 b1       	in	r24, 0x08	; 8
-  4c:	80 62       	ori	r24, 0x20	; 32
-  4e:	88 b9       	out	0x08, r24	; 8
-	#else
-		//round up by default
-		__ticks_dc = (uint32_t)(ceil(fabs(__tmp)));
-	#endif
+		PORTC = 0xFF;
+  7a:	8f ef       	ldi	r24, 0xFF	; 255
+  7c:	88 b9       	out	0x08, r24	; 8
+		PORTB = 0xFF;
+  7e:	85 b9       	out	0x05, r24	; 5
+		PORTD = 0xFF;
+  80:	8b b9       	out	0x0b, r24	; 11
+		delay_ms(1000);
+  82:	88 ee       	ldi	r24, 0xE8	; 232
+  84:	93 e0       	ldi	r25, 0x03	; 3
+  86:	e5 df       	rcall	.-54     	; 0x52 <delay_ms>
+		PORTC = 0x00;
+  88:	18 b8       	out	0x08, r1	; 8
+		PORTB = 0x00;
+  8a:	15 b8       	out	0x05, r1	; 5
+		PORTD = 0x00;
+  8c:	1b b8       	out	0x0b, r1	; 11
+		delay_ms(1000);
+  8e:	88 ee       	ldi	r24, 0xE8	; 232
+  90:	93 e0       	ldi	r25, 0x03	; 3
+  92:	df df       	rcall	.-66     	; 0x52 <delay_ms>
+  94:	f2 cf       	rjmp	.-28     	; 0x7a <main+0x2>
 
-	__builtin_avr_delay_cycles(__ticks_dc);
-  50:	2f e9       	ldi	r18, 0x9F	; 159
-  52:	86 e8       	ldi	r24, 0x86	; 134
-  54:	91 e0       	ldi	r25, 0x01	; 1
-  56:	21 50       	subi	r18, 0x01	; 1
-  58:	80 40       	sbci	r24, 0x00	; 0
-  5a:	90 40       	sbci	r25, 0x00	; 0
-  5c:	e1 f7       	brne	.-8      	; 0x56 <main+0x10>
-  5e:	00 c0       	rjmp	.+0      	; 0x60 <main+0x1a>
-  60:	00 00       	nop
-		_delay_ms(500); // Delay 500 ms
-		cbi(PORTC, 5); // Clear pin 5 on PORTC
-  62:	88 b1       	in	r24, 0x08	; 8
-  64:	8f 7d       	andi	r24, 0xDF	; 223
-  66:	88 b9       	out	0x08, r24	; 8
-  68:	2f e9       	ldi	r18, 0x9F	; 159
-  6a:	86 e8       	ldi	r24, 0x86	; 134
-  6c:	91 e0       	ldi	r25, 0x01	; 1
-  6e:	21 50       	subi	r18, 0x01	; 1
-  70:	80 40       	sbci	r24, 0x00	; 0
-  72:	90 40       	sbci	r25, 0x00	; 0
-  74:	e1 f7       	brne	.-8      	; 0x6e <main+0x28>
-  76:	00 c0       	rjmp	.+0      	; 0x78 <main+0x32>
-  78:	00 00       	nop
-  7a:	e7 cf       	rjmp	.-50     	; 0x4a <main+0x4>
+00000096 <_exit>:
+  96:	f8 94       	cli
 
-0000007c <_exit>:
-  7c:	f8 94       	cli
-
-0000007e <__stop_program>:
-  7e:	ff cf       	rjmp	.-2      	; 0x7e <__stop_program>
+00000098 <__stop_program>:
+  98:	ff cf       	rjmp	.-2      	; 0x98 <__stop_program>

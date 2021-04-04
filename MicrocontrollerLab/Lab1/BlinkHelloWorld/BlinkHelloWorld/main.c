@@ -1,19 +1,50 @@
-// Blink Version 2
+/*
+5-10-07
+Copyright Spark Fun Electronics© 2007
+Nathan Seidle
+nathan at sparkfun.com
+ATmega168
+Example Blink
+Toggles all IO pins at 1Hz
+*/
 #include <avr/io.h>
-#define F_CPU 1000000UL  // 1 MHz  CPU Clock Frequency
-#include <util/delay.h>  // Include the built in Delay Function
-#define sbi(var, mask)   ((var) |= (uint8_t)(1 << mask))
-#define cbi(var, mask)   ((var) &= (uint8_t)~(1 << mask))
+//Define functions
+//======================
+void ioinit(void); //Initializes IO
+void delay_ms(uint16_t x); //General purpose delay
+//======================
 int main (void)
 {
-	//1 = output, 0 = input
-	DDRC = 0b00100000; // Set Pin 5 as Output
+	ioinit(); //Setup IO pins and defaults
 	while(1)
 	{
-		sbi(PORTC, 5); // Set pin 5 on PORTC
-		_delay_ms(500); // Delay 500 ms
-		cbi(PORTC, 5); // Clear pin 5 on PORTC
-		_delay_ms(500); // Delay 500 ms
+		PORTC = 0xFF;
+		PORTB = 0xFF;
+		PORTD = 0xFF;
+		delay_ms(1000);
+		PORTC = 0x00;
+		PORTB = 0x00;
+		PORTD = 0x00;
+		delay_ms(1000);
 	}
 	return(0);
+}
+void ioinit (void)
+{
+	//1 = output, 0 = input
+	DDRB = 0b11111111; //All outputs
+	DDRC = 0b11111111; //All outputs
+	DDRD = 0b11111110; //PORTD (RX on PD0)
+}
+//General short delays
+void delay_ms(uint16_t x)
+{
+	uint8_t y, z;
+	for ( ; x > 0 ; x--){
+		for ( y = 0 ; y < 90 ; y++){
+			for ( z = 0 ; z < 6 ; z++){
+				asm volatile ("nop");
+			}
+		}
+	}
 }
