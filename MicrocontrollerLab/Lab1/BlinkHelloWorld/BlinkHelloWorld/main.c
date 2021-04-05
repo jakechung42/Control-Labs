@@ -21,11 +21,11 @@ int main (void)
 		PORTC = 0xFF;
 		PORTB = 0xFF;
 		PORTD = 0xFF;
-		delay_ms(1000);
+		delay_ms(500);
 		PORTC = 0x00;
 		PORTB = 0x00;
 		PORTD = 0x00;
-		delay_ms(1000);
+		delay_ms(500);
 	}
 	return(0);
 }
@@ -41,8 +41,8 @@ void delay_ms(uint16_t x)
 {
 	uint8_t y, z;
 	for ( ; x > 0 ; x--){
-		for ( y = 0 ; y < 90 ; y++){
-			for ( z = 0 ; z < 6 ; z++){
+		for ( y = 0 ; y < 60 ; y++){
+			for ( z = 0 ; z < 1 ; z++){
 				asm volatile ("nop");
 			}
 		}

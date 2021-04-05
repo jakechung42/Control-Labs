@@ -7,7 +7,7 @@
 int main (void)
 {
 	//1 = output, 0 = input
-	DDRD = 0b01000000; // Set Pin 5 as Output
+	DDRD = 0b01000000; // Set Pin 6 as Output
 	while(1)
 	{
 		sbi(PORTD, 6); // Set pin 6 on PORTD
