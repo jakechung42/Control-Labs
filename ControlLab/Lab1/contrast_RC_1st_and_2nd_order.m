@@ -4,13 +4,13 @@ close all;
 
 %compare the 1st order and 2nd order RC filters
 %define the 1st order 100Hz filter
-R1 = 7.23e3;
-C1 = 0.22e-6;
+R1 = 7.24e3;
+C1 = 0.214e-6;
 sys1 = tf(1,[R1*C1 1]);
 
 %define the 2st order 100Hz filter
-R2 = 8.76e3;
-C2 = 68e-9;
+R2 = (8.76e3+8.75e3)/2;
+C2 = (65.5e-9+68.4e-9)/2;
 sys2 = tf(1,[(R2*C2)^2 3*R2*C2 1]);
 
 %Use the Bode command to calculate the theoretical magnitude, phase of the system
@@ -61,7 +61,7 @@ xlim([10 10^4])
 hold on
 semilogx(w2,20*log10(magp2),w_data2,20*log10(mag_data2),'o')
 xlim([10 10^4])
-title('Second order RC filter 100Hz')
+title('Comparing the 1st and 2nd order RC filters')
 subplot(2,1,2)
 semilogx(w1,phasep1,w_data1,phase_data1,'o')
 xlabel('Frequency (rad/sec)')

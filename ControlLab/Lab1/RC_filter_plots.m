@@ -6,8 +6,8 @@ close all;
 % This file illustrates how to plot both experimental and theoritical data
 % on a Bode plot
 % Set up your theoretical system transfer function
-R = 7.23e3;
-C = 0.22e-6;
+R = 7.24e3;
+C = 0.214e-6;
 sys = tf(1,[R*C 1])
 
 % Input the experimental data
@@ -48,8 +48,8 @@ xlim([10 10^4])
 % This file illustrates how to plot both experimental and theoritical data
 % on a Bode plot
 % Set up your theoretical system transfer function
-R = 5.31e3;
-C = 0.1e-6;
+R = 5.25e3;
+C = 0.1036e-6;
 sys = tf(1,[R*C 1])
 
 % Input the experimental data
@@ -90,8 +90,8 @@ xlim([10 10^4])
 % This file illustrates how to plot both experimental and theoritical data
 % on a Bode plot
 % Set up your theoretical system transfer function
-R = 8.76e3;
-C = 68e-9;
+R = (8.76e3+8.75e3)/2;
+C = (65.5e-9+68.4e-9)/2;
 sys = tf(1,[(R*C)^2 3*R*C 1])
 
 % Input the experimental data
