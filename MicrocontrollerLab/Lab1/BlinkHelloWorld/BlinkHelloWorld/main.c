@@ -8,6 +8,7 @@ Example Blink
 Toggles all IO pins at 1Hz
 */
 #include <avr/io.h>
+#define F_CPU 1000000UL
 //Define functions
 //======================
 void ioinit(void); //Initializes IO
@@ -41,8 +42,8 @@ void delay_ms(uint16_t x)
 {
 	uint8_t y, z;
 	for ( ; x > 0 ; x--){
-		for ( y = 0 ; y < 60 ; y++){
-			for ( z = 0 ; z < 1 ; z++){
+		for ( y = 0 ; y < 90 ; y++){
+			for ( z = 0 ; z < 6 ; z++){
 				asm volatile ("nop");
 			}
 		}
