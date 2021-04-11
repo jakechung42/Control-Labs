@@ -26,5 +26,11 @@ classdef makeOpAmpCircuits
             %function to calculate R value for a pure integrator circuit
             R = 1/(A*C);
         end
+        function [R1, R2] = makeModIntegrator(A, fb, C)
+            %function to calculate R values for a modified integrator
+            %circuit
+            R2 = 1/(2*pi*fb*C);
+            R1 = R2/A;
+        end
     end
 end
