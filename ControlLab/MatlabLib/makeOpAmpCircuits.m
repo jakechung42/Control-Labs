@@ -22,5 +22,9 @@ classdef makeOpAmpCircuits
             end
             R2 = R1*(A-1);
         end
+        function R = makePureIntegrator(A, C)
+            %function to calculate R value for a pure integrator circuit
+            R = 1/(A*C);
+        end
     end
 end
