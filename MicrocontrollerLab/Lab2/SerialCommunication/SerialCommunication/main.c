@@ -22,7 +22,7 @@ static FILE mystdout = FDEV_SETUP_STREAM(uart_putchar, NULL, _FDEV_SETUP_WRITE);
 
 int main (void)
 {
-	unsigned char x = 0;
+	unsigned int x = 0;
 	
 	//1 = output, 0 = input
 	DDRC = 0b00100000; // Set Pin 5 as Output
@@ -36,15 +36,21 @@ int main (void)
 
 	while(1)
 	{
-		x++;
-		
-		printf("Test it! x = %d\n", x);
-		
-		sbi(PORTC, 5);
-		_delay_ms(500);
+		x=0;
+		while(x<0x1388)
+		{
+			x++;
+			printf("Test it! x = %d\n", x);
 
-		cbi(PORTC, 5);
-		_delay_ms(500);
+			_delay_ms(1);
+			/* comment this out for now. Doesn't seem to do anything
+			sbi(PORTC, 5);
+			_delay_ms(100);
+
+			cbi(PORTC, 5);
+			_delay_ms(100);
+			*/
+		}
 	}
 	
 	return(0);
