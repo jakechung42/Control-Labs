@@ -34,7 +34,6 @@ int main (void)
 	stdout = &mystdout; //Required for printf init
 
     //Set up for ADC
-    DDRD   = 0b11100000; //Set bits 6, 7 and 8 as outputs
 	ADMUX  = 0b00000000; //Input on AD Channel 0
 	ADCSRA = 0b10000111; // ADC on, /128 for a 16 MHz clock, interrupt off
 
