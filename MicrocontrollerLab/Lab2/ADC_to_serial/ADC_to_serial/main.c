@@ -46,7 +46,7 @@ int main (void)
 
 		adc_data = ADCW;
         
-        printf("Test it! x = %d\n", adc_data);
+        printf("%d\n", adc_data);
 
 	}
 	
