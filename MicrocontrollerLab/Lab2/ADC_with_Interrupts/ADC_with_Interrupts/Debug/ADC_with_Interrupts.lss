@@ -148,7 +148,7 @@ int main (void)
   a0:	8a b9       	out	0x0a, r24	; 10
 	ADMUX  = 0b00000000; //Input on AD Channel 0
   a2:	10 92 7c 00 	sts	0x007C, r1	; 0x80007c <__TEXT_REGION_LENGTH__+0x7fe07c>
-	ADCSRA = 0b11001111; // ADC on, /128 for a 20 MHz clock, interrupt on
+	ADCSRA = 0b11001111; // ADC on, /128 for a 16 MHz clock, interrupt on
   a6:	8f ec       	ldi	r24, 0xCF	; 207
   a8:	80 93 7a 00 	sts	0x007A, r24	; 0x80007a <__TEXT_REGION_LENGTH__+0x7fe07a>
 
