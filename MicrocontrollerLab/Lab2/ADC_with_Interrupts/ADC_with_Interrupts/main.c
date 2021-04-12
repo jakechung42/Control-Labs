@@ -31,7 +31,7 @@ int main (void)
 {
 	DDRD   = 0b11100000; //Set bits 6, 7 and 8 as outputs
 	ADMUX  = 0b00000000; //Input on AD Channel 0
-	ADCSRA = 0b11001111; // ADC on, /128 for a 20 MHz clock, interrupt on
+	ADCSRA = 0b11001111; // ADC on, /128 for a 16 MHz clock, interrupt on
 
 	asm("sei");
 
