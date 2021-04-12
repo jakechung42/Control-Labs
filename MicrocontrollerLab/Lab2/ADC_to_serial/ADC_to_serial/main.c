@@ -39,14 +39,22 @@ int main (void)
 
 	while(1)
 	{
-		ADCSRA = ADCSRA | 0b01000000;  // Start AD conversion, this or gate only flips ADSC
 
+        ADMUX = ADMUX ^ 0b00000001; //flipping between ADC0 and ADC1
+		ADCSRA = ADCSRA | 0b01000000;  // Start AD conversion, this OR gate only flips ADSC
 		while ((ADCSRA & 0b01000000) == 0b01000000); // Wait while AD conversion is executed
 
-		adc_data = ADCW;
-        
-        printf("%d\n", adc_data);
-
+        if (ADMUX==0b00000000) //print out depending on which channel is active
+        {
+            adc_data = ADCW;
+            printf("ACD0: %d\n", adc_data);
+        }
+        else
+        {
+            adc_data = ADCW;
+            printf("ACD1: %d\n", adc_data);
+        }
+        _delay_ms(500);
 	}
 	
 	return(0);
