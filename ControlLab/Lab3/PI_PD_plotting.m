@@ -40,7 +40,7 @@ semilogx(w,20*log10(magp),w_data,20*log10(mag_data),'o')
 xlabel('Frequency (rad/sec)')
 ylabel('Magnitude(db)')
 xlim([10 10^4])
-title('First order RC filter 100Hz')
+title('PD circuit')
 subplot(2,1,2)
 semilogx(w,phasep,w_data,phase_data,'o')
 xlabel('Frequency (rad/sec)')
@@ -60,14 +60,12 @@ sys = tf(num, den)
 
 %% experimental data
 %read data from .dat file
-data = load('PD_data.dat');
+data = load('PI_data.dat');
 f_data = data(:, 1);
 mag_data = data(:, 2);
 phase_data = data(:, 3);
 %convert frequency to angular frequency
 w_data = f_data*2*pi;
-%offset the phase data
-phase_data = -phase_data;
 
 %Use the Bode command to calculate the theoretical magnitude, phase of the system
 [mag,phase,w]=bode(sys);
@@ -84,7 +82,7 @@ semilogx(w,20*log10(magp),w_data,20*log10(mag_data),'o')
 xlabel('Frequency (rad/sec)')
 ylabel('Magnitude(db)')
 % xlim([10 10^4])
-title('First order RC filter 100Hz')
+title('PI circuit')
 subplot(2,1,2)
 semilogx(w,phasep,w_data,phase_data,'o')
 xlabel('Frequency (rad/sec)')
