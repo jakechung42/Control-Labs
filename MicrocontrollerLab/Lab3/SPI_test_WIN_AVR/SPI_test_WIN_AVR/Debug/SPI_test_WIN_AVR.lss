@@ -1,0 +1,135 @@
+
+SPI_test_WIN_AVR.elf:     file format elf32-avr
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .data         00000000  00800100  00800100  000000ce  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+  1 .text         0000007a  00000000  00000000  00000054  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  2 .comment      00000030  00000000  00000000  000000ce  2**0
+                  CONTENTS, READONLY
+  3 .note.gnu.avr.deviceinfo 0000003c  00000000  00000000  00000100  2**2
+                  CONTENTS, READONLY
+  4 .debug_aranges 00000028  00000000  00000000  0000013c  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  5 .debug_info   000006f3  00000000  00000000  00000164  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  6 .debug_abbrev 00000672  00000000  00000000  00000857  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  7 .debug_line   00000227  00000000  00000000  00000ec9  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  8 .debug_frame  00000034  00000000  00000000  000010f0  2**2
+                  CONTENTS, READONLY, DEBUGGING
+  9 .debug_str    0000038f  00000000  00000000  00001124  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 10 .debug_loc    0000001f  00000000  00000000  000014b3  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 11 .debug_ranges 00000018  00000000  00000000  000014d2  2**0
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .text:
+
+00000000 <__vectors>:
+   0:	19 c0       	rjmp	.+50     	; 0x34 <__ctors_end>
+   2:	20 c0       	rjmp	.+64     	; 0x44 <__bad_interrupt>
+   4:	1f c0       	rjmp	.+62     	; 0x44 <__bad_interrupt>
+   6:	1e c0       	rjmp	.+60     	; 0x44 <__bad_interrupt>
+   8:	1d c0       	rjmp	.+58     	; 0x44 <__bad_interrupt>
+   a:	1c c0       	rjmp	.+56     	; 0x44 <__bad_interrupt>
+   c:	1b c0       	rjmp	.+54     	; 0x44 <__bad_interrupt>
+   e:	1a c0       	rjmp	.+52     	; 0x44 <__bad_interrupt>
+  10:	19 c0       	rjmp	.+50     	; 0x44 <__bad_interrupt>
+  12:	18 c0       	rjmp	.+48     	; 0x44 <__bad_interrupt>
+  14:	17 c0       	rjmp	.+46     	; 0x44 <__bad_interrupt>
+  16:	16 c0       	rjmp	.+44     	; 0x44 <__bad_interrupt>
+  18:	15 c0       	rjmp	.+42     	; 0x44 <__bad_interrupt>
+  1a:	14 c0       	rjmp	.+40     	; 0x44 <__bad_interrupt>
+  1c:	13 c0       	rjmp	.+38     	; 0x44 <__bad_interrupt>
+  1e:	12 c0       	rjmp	.+36     	; 0x44 <__bad_interrupt>
+  20:	11 c0       	rjmp	.+34     	; 0x44 <__bad_interrupt>
+  22:	10 c0       	rjmp	.+32     	; 0x44 <__bad_interrupt>
+  24:	0f c0       	rjmp	.+30     	; 0x44 <__bad_interrupt>
+  26:	0e c0       	rjmp	.+28     	; 0x44 <__bad_interrupt>
+  28:	0d c0       	rjmp	.+26     	; 0x44 <__bad_interrupt>
+  2a:	0c c0       	rjmp	.+24     	; 0x44 <__bad_interrupt>
+  2c:	0b c0       	rjmp	.+22     	; 0x44 <__bad_interrupt>
+  2e:	0a c0       	rjmp	.+20     	; 0x44 <__bad_interrupt>
+  30:	09 c0       	rjmp	.+18     	; 0x44 <__bad_interrupt>
+  32:	08 c0       	rjmp	.+16     	; 0x44 <__bad_interrupt>
+
+00000034 <__ctors_end>:
+  34:	11 24       	eor	r1, r1
+  36:	1f be       	out	0x3f, r1	; 63
+  38:	cf ef       	ldi	r28, 0xFF	; 255
+  3a:	d4 e0       	ldi	r29, 0x04	; 4
+  3c:	de bf       	out	0x3e, r29	; 62
+  3e:	cd bf       	out	0x3d, r28	; 61
+  40:	08 d0       	rcall	.+16     	; 0x52 <main>
+  42:	19 c0       	rjmp	.+50     	; 0x76 <_exit>
+
+00000044 <__bad_interrupt>:
+  44:	dd cf       	rjmp	.-70     	; 0x0 <__vectors>
+
+00000046 <spi_write_read>:
+#define SPIF 7
+
+// SPI write read function
+unsigned char spi_write_read(unsigned char spi_data)
+{
+	SPDR=spi_data;
+  46:	8e bd       	out	0x2e, r24	; 46
+	while ((SPSR & (1<<SPIF))==0);	// Wait until the data transfer is complete
+  48:	0d b4       	in	r0, 0x2d	; 45
+  4a:	07 fe       	sbrs	r0, 7
+  4c:	fd cf       	rjmp	.-6      	; 0x48 <spi_write_read+0x2>
+	return SPDR;
+  4e:	8e b5       	in	r24, 0x2e	; 46
+}
+  50:	08 95       	ret
+
+00000052 <main>:
+{
+	unsigned char   spi_data_0;
+	unsigned char   spi_data_1;
+	unsigned char   dummy_read;
+
+	DDRB=0b00101100;	//Set Output Ports for the SPI Interface
+  52:	8c e2       	ldi	r24, 0x2C	; 44
+  54:	84 b9       	out	0x04, r24	; 4
+	DDRD=0b10000000;	//Set Output Ports for the Chip select
+  56:	80 e8       	ldi	r24, 0x80	; 128
+  58:	8a b9       	out	0x0a, r24	; 10
+
+	// SPI initialization
+	SPCR=0b01010010;
+  5a:	82 e5       	ldi	r24, 0x52	; 82
+  5c:	8c bd       	out	0x2c, r24	; 44
+	SPSR=0b00000000;
+  5e:	1d bc       	out	0x2d, r1	; 45
+	while(1)
+	{
+		spi_data_0 = 0b10001000;  //Set up first byte to write
+		spi_data_1 = 0b00100101;  //Set up second byte to write
+
+		cbi(PORTD,7);								// Activate the chip - set chip select to zero
+  60:	8b b1       	in	r24, 0x0b	; 11
+  62:	8f 77       	andi	r24, 0x7F	; 127
+  64:	8b b9       	out	0x0b, r24	; 11
+		dummy_read = spi_write_read(spi_data_0);	// Write/Read first byte
+  66:	88 e8       	ldi	r24, 0x88	; 136
+  68:	ee df       	rcall	.-36     	; 0x46 <spi_write_read>
+		dummy_read = spi_write_read(spi_data_1);  	// Write/Read second byte
+  6a:	85 e2       	ldi	r24, 0x25	; 37
+  6c:	ec df       	rcall	.-40     	; 0x46 <spi_write_read>
+		sbi(PORTD,7);								// Release the chip  - set chip select to one
+  6e:	8b b1       	in	r24, 0x0b	; 11
+  70:	80 68       	ori	r24, 0x80	; 128
+  72:	8b b9       	out	0x0b, r24	; 11
+  74:	f5 cf       	rjmp	.-22     	; 0x60 <main+0xe>
+
+00000076 <_exit>:
+  76:	f8 94       	cli
+
+00000078 <__stop_program>:
+  78:	ff cf       	rjmp	.-2      	; 0x78 <__stop_program>
