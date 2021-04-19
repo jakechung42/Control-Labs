@@ -19,8 +19,7 @@ int main (void)
 	unsigned char   spi_data_0;
 	unsigned char   spi_data_1;
 	unsigned char   dummy_read;
-	float voltage = 4;
-	unsigned int	adc_output;
+	unsigned int	adc_output = 0x0000;
 
 	DDRB=0b00101100;	//Set Output Ports for the SPI Interface
 	DDRD=0b10000000;	//Set Output Ports for the Chip select
@@ -28,8 +27,6 @@ int main (void)
 	// SPI initialization
 	SPCR=0b01010010;
 	SPSR=0b00000000;
-
-	adc_output = voltage*819;
 	
 	while(1)
 	{
@@ -42,5 +39,14 @@ int main (void)
 		dummy_read = spi_write_read(spi_data_0);	// Write/Read first byte
 		dummy_read = spi_write_read(spi_data_1);  	// Write/Read second byte
 		sbi(PORTD,7);								// Release the chip  - set chip select to one
+
+		if (adc_output==0x1000) //condition to reset spi_data
+		{
+			adc_output = 0;
+		} 
+		else
+		{
+			adc_output += 1;
+		}
 	}
 }

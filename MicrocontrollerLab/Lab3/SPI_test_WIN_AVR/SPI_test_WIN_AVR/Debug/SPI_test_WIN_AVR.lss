@@ -3,29 +3,29 @@ SPI_test_WIN_AVR.elf:     file format elf32-avr
 
 Sections:
 Idx Name          Size      VMA       LMA       File off  Algn
-  0 .data         00000000  00800100  00800100  000000ce  2**0
+  0 .data         00000000  00800100  00800100  000000ea  2**0
                   CONTENTS, ALLOC, LOAD, DATA
-  1 .text         0000007a  00000000  00000000  00000054  2**1
+  1 .text         00000096  00000000  00000000  00000054  2**1
                   CONTENTS, ALLOC, LOAD, READONLY, CODE
-  2 .comment      00000030  00000000  00000000  000000ce  2**0
+  2 .comment      00000030  00000000  00000000  000000ea  2**0
                   CONTENTS, READONLY
-  3 .note.gnu.avr.deviceinfo 0000003c  00000000  00000000  00000100  2**2
+  3 .note.gnu.avr.deviceinfo 0000003c  00000000  00000000  0000011c  2**2
                   CONTENTS, READONLY
-  4 .debug_aranges 00000028  00000000  00000000  0000013c  2**0
+  4 .debug_aranges 00000028  00000000  00000000  00000158  2**0
                   CONTENTS, READONLY, DEBUGGING
-  5 .debug_info   0000071a  00000000  00000000  00000164  2**0
+  5 .debug_info   000006f8  00000000  00000000  00000180  2**0
                   CONTENTS, READONLY, DEBUGGING
-  6 .debug_abbrev 00000692  00000000  00000000  0000087e  2**0
+  6 .debug_abbrev 00000661  00000000  00000000  00000878  2**0
                   CONTENTS, READONLY, DEBUGGING
-  7 .debug_line   00000227  00000000  00000000  00000f10  2**0
+  7 .debug_line   0000022f  00000000  00000000  00000ed9  2**0
                   CONTENTS, READONLY, DEBUGGING
-  8 .debug_frame  00000034  00000000  00000000  00001138  2**2
+  8 .debug_frame  00000034  00000000  00000000  00001108  2**2
                   CONTENTS, READONLY, DEBUGGING
-  9 .debug_str    000003a8  00000000  00000000  0000116c  2**0
+  9 .debug_str    0000039a  00000000  00000000  0000113c  2**0
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_loc    0000001f  00000000  00000000  00001514  2**0
+ 10 .debug_loc    00000063  00000000  00000000  000014d6  2**0
                   CONTENTS, READONLY, DEBUGGING
- 11 .debug_ranges 00000018  00000000  00000000  00001533  2**0
+ 11 .debug_ranges 00000018  00000000  00000000  00001539  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -66,7 +66,7 @@ Disassembly of section .text:
   3c:	de bf       	out	0x3e, r29	; 62
   3e:	cd bf       	out	0x3d, r28	; 61
   40:	08 d0       	rcall	.+16     	; 0x52 <main>
-  42:	19 c0       	rjmp	.+50     	; 0x76 <_exit>
+  42:	27 c0       	rjmp	.+78     	; 0x92 <_exit>
 
 00000044 <__bad_interrupt>:
   44:	dd cf       	rjmp	.-70     	; 0x0 <__vectors>
@@ -89,10 +89,10 @@ unsigned char spi_write_read(unsigned char spi_data)
   50:	08 95       	ret
 
 00000052 <main>:
+	unsigned char   spi_data_0;
 	unsigned char   spi_data_1;
 	unsigned char   dummy_read;
-	float voltage = 4;
-	unsigned int	adc_output;
+	unsigned int	adc_output = 0x0000;
 
 	DDRB=0b00101100;	//Set Output Ports for the SPI Interface
   52:	8c e2       	ldi	r24, 0x2C	; 44
@@ -107,29 +107,63 @@ unsigned char spi_write_read(unsigned char spi_data)
   5c:	8c bd       	out	0x2c, r24	; 44
 	SPSR=0b00000000;
   5e:	1d bc       	out	0x2d, r1	; 45
+int main (void)
+{
+	unsigned char   spi_data_0;
+	unsigned char   spi_data_1;
+	unsigned char   dummy_read;
+	unsigned int	adc_output = 0x0000;
+  60:	c0 e0       	ldi	r28, 0x00	; 0
+  62:	d0 e0       	ldi	r29, 0x00	; 0
+  64:	02 c0       	rjmp	.+4      	; 0x6a <main+0x18>
+		dummy_read = spi_write_read(spi_data_1);  	// Write/Read second byte
+		sbi(PORTD,7);								// Release the chip  - set chip select to one
+
+		if (adc_output==0x1000) //condition to reset spi_data
+		{
+			adc_output = 0;
+  66:	c0 e0       	ldi	r28, 0x00	; 0
+  68:	d0 e0       	ldi	r29, 0x00	; 0
 		spi_data_0 = 0x00;
 		spi_data_0 = (adc_output & 0x0F00) >> 8;  //Set up first byte to write
 		spi_data_0 = spi_data_0 + 0b00110000;
 		spi_data_1 = (adc_output & 0xFF);  //Set up second byte to write
 
 		cbi(PORTD,7);								// Activate the chip - set chip select to zero
-  60:	8b b1       	in	r24, 0x0b	; 11
-  62:	8f 77       	andi	r24, 0x7F	; 127
-  64:	8b b9       	out	0x0b, r24	; 11
+  6a:	8b b1       	in	r24, 0x0b	; 11
+  6c:	8f 77       	andi	r24, 0x7F	; 127
+  6e:	8b b9       	out	0x0b, r24	; 11
 		dummy_read = spi_write_read(spi_data_0);	// Write/Read first byte
-  66:	8c e3       	ldi	r24, 0x3C	; 60
-  68:	ee df       	rcall	.-36     	; 0x46 <spi_write_read>
+  70:	ce 01       	movw	r24, r28
+  72:	88 27       	eor	r24, r24
+  74:	9f 70       	andi	r25, 0x0F	; 15
+  76:	80 e3       	ldi	r24, 0x30	; 48
+  78:	89 0f       	add	r24, r25
+  7a:	e5 df       	rcall	.-54     	; 0x46 <spi_write_read>
 		dummy_read = spi_write_read(spi_data_1);  	// Write/Read second byte
-  6a:	8c ec       	ldi	r24, 0xCC	; 204
-  6c:	ec df       	rcall	.-40     	; 0x46 <spi_write_read>
+  7c:	8c 2f       	mov	r24, r28
+  7e:	e3 df       	rcall	.-58     	; 0x46 <spi_write_read>
 		sbi(PORTD,7);								// Release the chip  - set chip select to one
-  6e:	8b b1       	in	r24, 0x0b	; 11
-  70:	80 68       	ori	r24, 0x80	; 128
-  72:	8b b9       	out	0x0b, r24	; 11
-  74:	f5 cf       	rjmp	.-22     	; 0x60 <main+0xe>
+  80:	8b b1       	in	r24, 0x0b	; 11
+  82:	80 68       	ori	r24, 0x80	; 128
+  84:	8b b9       	out	0x0b, r24	; 11
 
-00000076 <_exit>:
-  76:	f8 94       	cli
+		if (adc_output==0x1000) //condition to reset spi_data
+  86:	c1 15       	cp	r28, r1
+  88:	80 e1       	ldi	r24, 0x10	; 16
+  8a:	d8 07       	cpc	r29, r24
+  8c:	61 f3       	breq	.-40     	; 0x66 <main+0x14>
+		{
+			adc_output = 0;
+		} 
+		else
+		{
+			adc_output += 1;
+  8e:	21 96       	adiw	r28, 0x01	; 1
+  90:	ec cf       	rjmp	.-40     	; 0x6a <main+0x18>
 
-00000078 <__stop_program>:
-  78:	ff cf       	rjmp	.-2      	; 0x78 <__stop_program>
+00000092 <_exit>:
+  92:	f8 94       	cli
+
+00000094 <__stop_program>:
+  94:	ff cf       	rjmp	.-2      	; 0x94 <__stop_program>
