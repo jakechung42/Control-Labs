@@ -43,7 +43,7 @@ int main (void)
 		if (adc_output==0x1000) //condition to reset spi_data
 		{
 			adc_output = 0;
-		} 
+		}
 		else
 		{
 			adc_output += 1;
