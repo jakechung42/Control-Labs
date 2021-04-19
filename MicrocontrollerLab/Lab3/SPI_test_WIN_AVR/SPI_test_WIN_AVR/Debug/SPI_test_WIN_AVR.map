@@ -366,15 +366,15 @@ END GROUP
 .debug_pubnames
  *(.debug_pubnames)
 
-.debug_info     0x00000000      0x6f3
+.debug_info     0x00000000      0x71a
  *(.debug_info .gnu.linkonce.wi.*)
  .debug_info    0x00000000      0x5f4 O:/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.6.364/gcc/dev/atmega88a/avr4/crtatmega88a.o
- .debug_info    0x000005f4       0xff main.o
+ .debug_info    0x000005f4      0x126 main.o
 
-.debug_abbrev   0x00000000      0x672
+.debug_abbrev   0x00000000      0x692
  *(.debug_abbrev)
  .debug_abbrev  0x00000000      0x5a2 O:/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.6.364/gcc/dev/atmega88a/avr4/crtatmega88a.o
- .debug_abbrev  0x000005a2       0xd0 main.o
+ .debug_abbrev  0x000005a2       0xf0 main.o
 
 .debug_line     0x00000000      0x227
  *(.debug_line .debug_line.* .debug_line_end)
@@ -385,11 +385,11 @@ END GROUP
  *(.debug_frame)
  .debug_frame   0x00000000       0x34 main.o
 
-.debug_str      0x00000000      0x38f
+.debug_str      0x00000000      0x3a8
  *(.debug_str)
  .debug_str     0x00000000      0x208 O:/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.6.364/gcc/dev/atmega88a/avr4/crtatmega88a.o
- .debug_str     0x00000208      0x187 main.o
-                                0x1bb (size before relaxing)
+ .debug_str     0x00000208      0x1a0 main.o
+                                0x1d4 (size before relaxing)
 
 .debug_loc      0x00000000       0x1f
  *(.debug_loc)

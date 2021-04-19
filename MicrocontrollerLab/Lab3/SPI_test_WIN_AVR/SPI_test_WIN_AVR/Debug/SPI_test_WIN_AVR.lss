@@ -13,19 +13,19 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY
   4 .debug_aranges 00000028  00000000  00000000  0000013c  2**0
                   CONTENTS, READONLY, DEBUGGING
-  5 .debug_info   000006f3  00000000  00000000  00000164  2**0
+  5 .debug_info   0000071a  00000000  00000000  00000164  2**0
                   CONTENTS, READONLY, DEBUGGING
-  6 .debug_abbrev 00000672  00000000  00000000  00000857  2**0
+  6 .debug_abbrev 00000692  00000000  00000000  0000087e  2**0
                   CONTENTS, READONLY, DEBUGGING
-  7 .debug_line   00000227  00000000  00000000  00000ec9  2**0
+  7 .debug_line   00000227  00000000  00000000  00000f10  2**0
                   CONTENTS, READONLY, DEBUGGING
-  8 .debug_frame  00000034  00000000  00000000  000010f0  2**2
+  8 .debug_frame  00000034  00000000  00000000  00001138  2**2
                   CONTENTS, READONLY, DEBUGGING
-  9 .debug_str    0000038f  00000000  00000000  00001124  2**0
+  9 .debug_str    000003a8  00000000  00000000  0000116c  2**0
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_loc    0000001f  00000000  00000000  000014b3  2**0
+ 10 .debug_loc    0000001f  00000000  00000000  00001514  2**0
                   CONTENTS, READONLY, DEBUGGING
- 11 .debug_ranges 00000018  00000000  00000000  000014d2  2**0
+ 11 .debug_ranges 00000018  00000000  00000000  00001533  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -89,10 +89,10 @@ unsigned char spi_write_read(unsigned char spi_data)
   50:	08 95       	ret
 
 00000052 <main>:
-{
-	unsigned char   spi_data_0;
 	unsigned char   spi_data_1;
 	unsigned char   dummy_read;
+	float voltage = 4;
+	unsigned int	adc_output;
 
 	DDRB=0b00101100;	//Set Output Ports for the SPI Interface
   52:	8c e2       	ldi	r24, 0x2C	; 44
@@ -107,20 +107,20 @@ unsigned char spi_write_read(unsigned char spi_data)
   5c:	8c bd       	out	0x2c, r24	; 44
 	SPSR=0b00000000;
   5e:	1d bc       	out	0x2d, r1	; 45
-	while(1)
-	{
-		spi_data_0 = 0b10001000;  //Set up first byte to write
-		spi_data_1 = 0b00100101;  //Set up second byte to write
+		spi_data_0 = 0x00;
+		spi_data_0 = (adc_output & 0x0F00) >> 8;  //Set up first byte to write
+		spi_data_0 = spi_data_0 + 0b00110000;
+		spi_data_1 = (adc_output & 0xFF);  //Set up second byte to write
 
 		cbi(PORTD,7);								// Activate the chip - set chip select to zero
   60:	8b b1       	in	r24, 0x0b	; 11
   62:	8f 77       	andi	r24, 0x7F	; 127
   64:	8b b9       	out	0x0b, r24	; 11
 		dummy_read = spi_write_read(spi_data_0);	// Write/Read first byte
-  66:	88 e8       	ldi	r24, 0x88	; 136
+  66:	8c e3       	ldi	r24, 0x3C	; 60
   68:	ee df       	rcall	.-36     	; 0x46 <spi_write_read>
 		dummy_read = spi_write_read(spi_data_1);  	// Write/Read second byte
-  6a:	85 e2       	ldi	r24, 0x25	; 37
+  6a:	8c ec       	ldi	r24, 0xCC	; 204
   6c:	ec df       	rcall	.-40     	; 0x46 <spi_write_read>
 		sbi(PORTD,7);								// Release the chip  - set chip select to one
   6e:	8b b1       	in	r24, 0x0b	; 11
