@@ -37,7 +37,8 @@ int main (void)
 		//ADC process
 		ADCSRA = ADCSRA | 0b01000000;  // Start AD conversion, this or gate only flips ADSC
 		while ((ADCSRA & 0b01000000) == 0b01000000); // Wait while AD conversion is executed
-		adc_output = ADCW * 4;
+		adc_output = ADCW;
+		adc_output = adc_output << 2;
 
 		//SPI process
 		spi_data_0 = 0x00;
