@@ -15,7 +15,7 @@ int main (void)
 
 	// OCR1A = Target_Timer_Count = (Clock_Frequency / (Prescale * Target_Frequency)) - 1
 
-	OCR1A = 7999;   //Set CTC compare value to 1Hz at 1MHz AVR clock, with a prescaler of 64
+	OCR1A = 1599;   //Set CTC compare value to 1Hz at 1MHz AVR clock, with a prescaler of 64
 
 	//Prescaler Fcpu/1 to get 1kHz and 5kHz counter
 	TCCR1B = TCCR1B | (1 << CS10);
