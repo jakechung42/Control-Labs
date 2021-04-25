@@ -100,9 +100,9 @@ int main (void)
 
 	// OCR1A = Target_Timer_Count = (Clock_Frequency / (Prescale * Target_Frequency)) - 1
 
-	OCR1A = 1599;   //Set CTC compare value to 1Hz at 1MHz AVR clock, with a prescaler of 64
-  60:	8f e3       	ldi	r24, 0x3F	; 63
-  62:	96 e0       	ldi	r25, 0x06	; 6
+	OCR1A = 31;   //Set CTC compare value to 1Hz at 1MHz AVR clock, with a prescaler of 64
+  60:	8f e1       	ldi	r24, 0x1F	; 31
+  62:	90 e0       	ldi	r25, 0x00	; 0
   64:	90 93 89 00 	sts	0x0089, r25	; 0x800089 <__TEXT_REGION_LENGTH__+0x7fe089>
   68:	80 93 88 00 	sts	0x0088, r24	; 0x800088 <__TEXT_REGION_LENGTH__+0x7fe088>
 
