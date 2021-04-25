@@ -13,12 +13,15 @@ int main (void)
 
 	sei(); // Enable global interrupts
 
-	// OCR1A = Target_Timer_Count = (Clock_Frequency / (Prescale * Target_Frequency)) � 1
+	// OCR1A = Target_Timer_Count = (Clock_Frequency / (Prescale * Target_Frequency)) - 1
 
-	OCR1A = 31249;   //Set CTC compare value to 1Hz at 1MHz AVR clock, with a prescaler of 64
+	OCR1A = 7999;   //Set CTC compare value to 1Hz at 1MHz AVR clock, with a prescaler of 64
 
-	// Timer at Fcpu/256 prescaler
-	TCCR1B = TCCR1B | (1 << CS12); 
+	//Prescaler Fcpu/1 to get 1kHz and 5kHz counter
+	TCCR1B = TCCR1B | (1 << CS10);
+
+	// Timer at Fcpu/256 prescaler to get the 1Hz clock
+	//TCCR1B = TCCR1B | (1 << CS12); 
 
 	// TCCR1B |= ((1 << CS10) | (1 << CS11)); // Start timer at Fcpu/64 
 
