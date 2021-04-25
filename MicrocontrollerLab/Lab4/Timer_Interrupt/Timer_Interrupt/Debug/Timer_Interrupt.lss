@@ -1,0 +1,150 @@
+
+Timer_Interrupt.elf:     file format elf32-avr
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .data         00000000  00800100  00800100  000000f0  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+  1 .text         0000009c  00000000  00000000  00000054  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  2 .comment      00000030  00000000  00000000  000000f0  2**0
+                  CONTENTS, READONLY
+  3 .note.gnu.avr.deviceinfo 0000003c  00000000  00000000  00000120  2**2
+                  CONTENTS, READONLY
+  4 .debug_aranges 00000028  00000000  00000000  0000015c  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  5 .debug_info   0000069d  00000000  00000000  00000184  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  6 .debug_abbrev 00000610  00000000  00000000  00000821  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  7 .debug_line   000001f9  00000000  00000000  00000e31  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  8 .debug_frame  00000048  00000000  00000000  0000102c  2**2
+                  CONTENTS, READONLY, DEBUGGING
+  9 .debug_str    00000369  00000000  00000000  00001074  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 10 .debug_loc    00000049  00000000  00000000  000013dd  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 11 .debug_ranges 00000018  00000000  00000000  00001426  2**0
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .text:
+
+00000000 <__vectors>:
+   0:	19 c0       	rjmp	.+50     	; 0x34 <__ctors_end>
+   2:	20 c0       	rjmp	.+64     	; 0x44 <__bad_interrupt>
+   4:	1f c0       	rjmp	.+62     	; 0x44 <__bad_interrupt>
+   6:	1e c0       	rjmp	.+60     	; 0x44 <__bad_interrupt>
+   8:	1d c0       	rjmp	.+58     	; 0x44 <__bad_interrupt>
+   a:	1c c0       	rjmp	.+56     	; 0x44 <__bad_interrupt>
+   c:	1b c0       	rjmp	.+54     	; 0x44 <__bad_interrupt>
+   e:	1a c0       	rjmp	.+52     	; 0x44 <__bad_interrupt>
+  10:	19 c0       	rjmp	.+50     	; 0x44 <__bad_interrupt>
+  12:	18 c0       	rjmp	.+48     	; 0x44 <__bad_interrupt>
+  14:	17 c0       	rjmp	.+46     	; 0x44 <__bad_interrupt>
+  16:	2e c0       	rjmp	.+92     	; 0x74 <__vector_11>
+  18:	15 c0       	rjmp	.+42     	; 0x44 <__bad_interrupt>
+  1a:	14 c0       	rjmp	.+40     	; 0x44 <__bad_interrupt>
+  1c:	13 c0       	rjmp	.+38     	; 0x44 <__bad_interrupt>
+  1e:	12 c0       	rjmp	.+36     	; 0x44 <__bad_interrupt>
+  20:	11 c0       	rjmp	.+34     	; 0x44 <__bad_interrupt>
+  22:	10 c0       	rjmp	.+32     	; 0x44 <__bad_interrupt>
+  24:	0f c0       	rjmp	.+30     	; 0x44 <__bad_interrupt>
+  26:	0e c0       	rjmp	.+28     	; 0x44 <__bad_interrupt>
+  28:	0d c0       	rjmp	.+26     	; 0x44 <__bad_interrupt>
+  2a:	0c c0       	rjmp	.+24     	; 0x44 <__bad_interrupt>
+  2c:	0b c0       	rjmp	.+22     	; 0x44 <__bad_interrupt>
+  2e:	0a c0       	rjmp	.+20     	; 0x44 <__bad_interrupt>
+  30:	09 c0       	rjmp	.+18     	; 0x44 <__bad_interrupt>
+  32:	08 c0       	rjmp	.+16     	; 0x44 <__bad_interrupt>
+
+00000034 <__ctors_end>:
+  34:	11 24       	eor	r1, r1
+  36:	1f be       	out	0x3f, r1	; 63
+  38:	cf ef       	ldi	r28, 0xFF	; 255
+  3a:	d4 e0       	ldi	r29, 0x04	; 4
+  3c:	de bf       	out	0x3e, r29	; 62
+  3e:	cd bf       	out	0x3d, r28	; 61
+  40:	02 d0       	rcall	.+4      	; 0x46 <main>
+  42:	2a c0       	rjmp	.+84     	; 0x98 <_exit>
+
+00000044 <__bad_interrupt>:
+  44:	dd cf       	rjmp	.-70     	; 0x0 <__vectors>
+
+00000046 <main>:
+#include <avr/io.h>
+#include <avr/interrupt.h>
+
+int main (void)
+{
+	DDRC = (1 << 5); // Set Pin 5 on Port C as output
+  46:	80 e2       	ldi	r24, 0x20	; 32
+  48:	87 b9       	out	0x07, r24	; 7
+
+	TCCR1B |= (1 << WGM12); // Configure timer 1 for CTC mode
+  4a:	e1 e8       	ldi	r30, 0x81	; 129
+  4c:	f0 e0       	ldi	r31, 0x00	; 0
+  4e:	80 81       	ld	r24, Z
+  50:	88 60       	ori	r24, 0x08	; 8
+  52:	80 83       	st	Z, r24
+
+	TIMSK1 |= (1 << OCIE1A); // Enable CTC interrupt
+  54:	af e6       	ldi	r26, 0x6F	; 111
+  56:	b0 e0       	ldi	r27, 0x00	; 0
+  58:	8c 91       	ld	r24, X
+  5a:	82 60       	ori	r24, 0x02	; 2
+  5c:	8c 93       	st	X, r24
+
+	sei(); // Enable global interrupts
+  5e:	78 94       	sei
+
+	// OCR1A = Target_Timer_Count = (Clock_Frequency / (Prescale * Target_Frequency)) � 1
+
+	OCR1A = 31249;   //Set CTC compare value to 1Hz at 1MHz AVR clock, with a prescaler of 64
+  60:	81 e1       	ldi	r24, 0x11	; 17
+  62:	9a e7       	ldi	r25, 0x7A	; 122
+  64:	90 93 89 00 	sts	0x0089, r25	; 0x800089 <__TEXT_REGION_LENGTH__+0x7fe089>
+  68:	80 93 88 00 	sts	0x0088, r24	; 0x800088 <__TEXT_REGION_LENGTH__+0x7fe088>
+
+	// Timer at Fcpu/256 prescaler
+	TCCR1B = TCCR1B | (1 << CS12); 
+  6c:	80 81       	ld	r24, Z
+  6e:	84 60       	ori	r24, 0x04	; 4
+  70:	80 83       	st	Z, r24
+  72:	ff cf       	rjmp	.-2      	; 0x72 <main+0x2c>
+
+00000074 <__vector_11>:
+	while(1){}
+
+}
+
+ISR(TIMER1_COMPA_vect)
+{
+  74:	1f 92       	push	r1
+  76:	0f 92       	push	r0
+  78:	0f b6       	in	r0, 0x3f	; 63
+  7a:	0f 92       	push	r0
+  7c:	11 24       	eor	r1, r1
+  7e:	8f 93       	push	r24
+  80:	9f 93       	push	r25
+	// Place code here that should be executed when the interrupt occurs
+
+	PORTC ^= (1 << 5); // Toggle Pin 5 on Port C
+  82:	98 b1       	in	r25, 0x08	; 8
+  84:	80 e2       	ldi	r24, 0x20	; 32
+  86:	89 27       	eor	r24, r25
+  88:	88 b9       	out	0x08, r24	; 8
+}
+  8a:	9f 91       	pop	r25
+  8c:	8f 91       	pop	r24
+  8e:	0f 90       	pop	r0
+  90:	0f be       	out	0x3f, r0	; 63
+  92:	0f 90       	pop	r0
+  94:	1f 90       	pop	r1
+  96:	18 95       	reti
+
+00000098 <_exit>:
+  98:	f8 94       	cli
+
+0000009a <__stop_program>:
+  9a:	ff cf       	rjmp	.-2      	; 0x9a <__stop_program>
