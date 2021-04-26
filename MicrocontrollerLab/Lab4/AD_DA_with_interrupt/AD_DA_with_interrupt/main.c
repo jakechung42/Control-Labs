@@ -36,9 +36,12 @@ int main (void)
 
 	sei(); // Enable global interrupts
 
-	// OCR1A = Target_Timer_Count = (Clock_Frequency / (Prescale * Target_Frequency)) - 1
+	// this formular is not the same as the example's formula
+	// since the mechanics of this code is different, the formulas need to change to 
+	// get accurate sampling frequency
+	// OCR1A = Target_Timer_Count = (2 * Clock_Frequency / (Prescale * Target_Frequency)) - 1
 
-	OCR1A = 7999;   //Set CTC compare value to 1kHz at 8MHz AVR clock, with a prescaler of 1
+	OCR1A = 15999;   //Set CTC compare value to 1kHz at 8MHz AVR clock, with a prescaler of 1
 
 	//Prescaler Fcpu/1 to get 1kHz 
 	TCCR1B = TCCR1B | (1 << CS10);
@@ -52,7 +55,6 @@ int main (void)
 ISR(TIMER1_COMPA_vect)
 {
 	//Start the AD DA process on interrupt counter
-
 	//ADC process
 	ADCSRA = ADCSRA | 0b01000000;  // Start AD conversion, this or gate only flips ADSC
 	while ((ADCSRA & 0b01000000) == 0b01000000); // Wait while AD conversion is executed
@@ -64,7 +66,6 @@ ISR(TIMER1_COMPA_vect)
 	spi_data_0 = (adc_output & 0x0F00) >> 8;  //Set up first byte to write
 	spi_data_0 = spi_data_0 + 0b00110000;
 	spi_data_1 = (adc_output & 0xFF);  //Set up second byte to write
-
 	cbi(PORTD,7);								// Activate the chip - set chip select to zero
 	dummy_read = spi_write_read(spi_data_0);	// Write/Read first byte
 	dummy_read = spi_write_read(spi_data_1);  	// Write/Read second byte

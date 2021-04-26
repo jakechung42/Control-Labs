@@ -144,12 +144,14 @@ int main (void)
 
 	sei(); // Enable global interrupts
   90:	78 94       	sei
+	// this formular is not the same as the example's formula
+	// since the mechanics of this code is different, the formulas need to change to 
+	// get accurate sampling frequency
+	// OCR1A = Target_Timer_Count = (2 * Clock_Frequency / (Prescale * Target_Frequency)) - 1
 
-	// OCR1A = Target_Timer_Count = (Clock_Frequency / (Prescale * Target_Frequency)) - 1
-
-	OCR1A = 7999;   //Set CTC compare value to 1kHz at 8MHz AVR clock, with a prescaler of 1
-  92:	8f e3       	ldi	r24, 0x3F	; 63
-  94:	9f e1       	ldi	r25, 0x1F	; 31
+	OCR1A = 15999;   //Set CTC compare value to 1kHz at 8MHz AVR clock, with a prescaler of 1
+  92:	8f e7       	ldi	r24, 0x7F	; 127
+  94:	9e e3       	ldi	r25, 0x3E	; 62
   96:	90 93 89 00 	sts	0x0089, r25	; 0x800089 <__TEXT_REGION_LENGTH__+0x7fe089>
   9a:	80 93 88 00 	sts	0x0088, r24	; 0x800088 <__TEXT_REGION_LENGTH__+0x7fe088>
 
@@ -185,7 +187,6 @@ ISR(TIMER1_COMPA_vect)
   c4:	ef 93       	push	r30
   c6:	ff 93       	push	r31
 	//Start the AD DA process on interrupt counter
-
 	//ADC process
 	ADCSRA = ADCSRA | 0b01000000;  // Start AD conversion, this or gate only flips ADSC
   c8:	ea e7       	ldi	r30, 0x7A	; 122
@@ -219,8 +220,7 @@ ISR(TIMER1_COMPA_vect)
   fa:	93 0f       	add	r25, r19
   fc:	90 93 04 01 	sts	0x0104, r25	; 0x800104 <spi_data_0>
 	spi_data_1 = (adc_output & 0xFF);  //Set up second byte to write
- 100:	80 93 00 01 	sts	0x0100, r24	; 0x800100 <_edata>
-
+ 100:	80 93 00 01 	sts	0x0100, r24	; 0x800100 <__DATA_REGION_ORIGIN__>
 	cbi(PORTD,7);								// Activate the chip - set chip select to zero
  104:	8b b1       	in	r24, 0x0b	; 11
  106:	8f 77       	andi	r24, 0x7F	; 127
@@ -230,7 +230,7 @@ ISR(TIMER1_COMPA_vect)
  10e:	a3 df       	rcall	.-186    	; 0x56 <spi_write_read>
  110:	80 93 01 01 	sts	0x0101, r24	; 0x800101 <dummy_read>
 	dummy_read = spi_write_read(spi_data_1);  	// Write/Read second byte
- 114:	80 91 00 01 	lds	r24, 0x0100	; 0x800100 <_edata>
+ 114:	80 91 00 01 	lds	r24, 0x0100	; 0x800100 <__DATA_REGION_ORIGIN__>
  118:	9e df       	rcall	.-196    	; 0x56 <spi_write_read>
  11a:	80 93 01 01 	sts	0x0101, r24	; 0x800101 <dummy_read>
 	sbi(PORTD,7);	
