@@ -36,12 +36,9 @@ int main (void)
 
 	sei(); // Enable global interrupts
 
-	// this formular is not the same as the example's formula
-	// since the mechanics of this code is different, the formulas need to change to 
-	// get accurate sampling frequency
-	// OCR1A = Target_Timer_Count = (2 * Clock_Frequency / (Prescale * Target_Frequency)) - 1
+	// OCR1A = Target_Timer_Count = (Clock_Frequency / (Prescale * Target_Frequency)) - 1
 
-	OCR1A = 15999;   //Set CTC compare value to 1kHz at 8MHz AVR clock, with a prescaler of 1
+	OCR1A = 15999;   //Set CTC compare value to 1kHz at 16MHz AVR clock, with a prescaler of 1
 
 	//Prescaler Fcpu/1 to get 1kHz 
 	TCCR1B = TCCR1B | (1 << CS10);
