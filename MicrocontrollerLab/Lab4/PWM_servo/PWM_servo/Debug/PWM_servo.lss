@@ -1,0 +1,169 @@
+
+PWM_servo.elf:     file format elf32-avr
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .data         00000000  00800100  00800100  0000011a  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+  1 .text         000000c6  00000000  00000000  00000054  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  2 .comment      00000030  00000000  00000000  0000011a  2**0
+                  CONTENTS, READONLY
+  3 .note.gnu.avr.deviceinfo 0000003c  00000000  00000000  0000014c  2**2
+                  CONTENTS, READONLY
+  4 .debug_aranges 00000020  00000000  00000000  00000188  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  5 .debug_info   0000074f  00000000  00000000  000001a8  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  6 .debug_abbrev 0000067e  00000000  00000000  000008f7  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  7 .debug_line   0000026c  00000000  00000000  00000f75  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  8 .debug_frame  00000024  00000000  00000000  000011e4  2**2
+                  CONTENTS, READONLY, DEBUGGING
+  9 .debug_str    0000039c  00000000  00000000  00001208  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 10 .debug_loc    000000b4  00000000  00000000  000015a4  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 11 .debug_ranges 00000010  00000000  00000000  00001658  2**0
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .text:
+
+00000000 <__vectors>:
+   0:	19 c0       	rjmp	.+50     	; 0x34 <__ctors_end>
+   2:	20 c0       	rjmp	.+64     	; 0x44 <__bad_interrupt>
+   4:	1f c0       	rjmp	.+62     	; 0x44 <__bad_interrupt>
+   6:	1e c0       	rjmp	.+60     	; 0x44 <__bad_interrupt>
+   8:	1d c0       	rjmp	.+58     	; 0x44 <__bad_interrupt>
+   a:	1c c0       	rjmp	.+56     	; 0x44 <__bad_interrupt>
+   c:	1b c0       	rjmp	.+54     	; 0x44 <__bad_interrupt>
+   e:	1a c0       	rjmp	.+52     	; 0x44 <__bad_interrupt>
+  10:	19 c0       	rjmp	.+50     	; 0x44 <__bad_interrupt>
+  12:	18 c0       	rjmp	.+48     	; 0x44 <__bad_interrupt>
+  14:	17 c0       	rjmp	.+46     	; 0x44 <__bad_interrupt>
+  16:	16 c0       	rjmp	.+44     	; 0x44 <__bad_interrupt>
+  18:	15 c0       	rjmp	.+42     	; 0x44 <__bad_interrupt>
+  1a:	14 c0       	rjmp	.+40     	; 0x44 <__bad_interrupt>
+  1c:	13 c0       	rjmp	.+38     	; 0x44 <__bad_interrupt>
+  1e:	12 c0       	rjmp	.+36     	; 0x44 <__bad_interrupt>
+  20:	11 c0       	rjmp	.+34     	; 0x44 <__bad_interrupt>
+  22:	10 c0       	rjmp	.+32     	; 0x44 <__bad_interrupt>
+  24:	0f c0       	rjmp	.+30     	; 0x44 <__bad_interrupt>
+  26:	0e c0       	rjmp	.+28     	; 0x44 <__bad_interrupt>
+  28:	0d c0       	rjmp	.+26     	; 0x44 <__bad_interrupt>
+  2a:	0c c0       	rjmp	.+24     	; 0x44 <__bad_interrupt>
+  2c:	0b c0       	rjmp	.+22     	; 0x44 <__bad_interrupt>
+  2e:	0a c0       	rjmp	.+20     	; 0x44 <__bad_interrupt>
+  30:	09 c0       	rjmp	.+18     	; 0x44 <__bad_interrupt>
+  32:	08 c0       	rjmp	.+16     	; 0x44 <__bad_interrupt>
+
+00000034 <__ctors_end>:
+  34:	11 24       	eor	r1, r1
+  36:	1f be       	out	0x3f, r1	; 63
+  38:	cf ef       	ldi	r28, 0xFF	; 255
+  3a:	d4 e0       	ldi	r29, 0x04	; 4
+  3c:	de bf       	out	0x3e, r29	; 62
+  3e:	cd bf       	out	0x3d, r28	; 61
+  40:	02 d0       	rcall	.+4      	; 0x46 <main>
+  42:	3f c0       	rjmp	.+126    	; 0xc2 <_exit>
+
+00000044 <__bad_interrupt>:
+  44:	dd cf       	rjmp	.-70     	; 0x0 <__vectors>
+
+00000046 <main>:
+void _delay_ms ( double __ms ); // Delay milliseconds
+
+int main(void)
+{
+	int ii;
+	DDRB=0xFF; //Set PORTB1 pin as output
+  46:	8f ef       	ldi	r24, 0xFF	; 255
+  48:	84 b9       	out	0x04, r24	; 4
+	//Fast PWM
+	//ICR1=40000 defines 50Hz PWM (clock frequency/prescaler)/(target frequency)
+	//for a 16 MHz clock frequency, a prescaler of 8 and a target frequency of 50 Hz
+	//Start timer with prescaler 8
+
+	ICR1=40000; // PWM Count = Clock Speed / (Target Frequency * prescaler) = 16,000,000/(50*8) = 400000
+  4a:	80 e4       	ldi	r24, 0x40	; 64
+  4c:	9c e9       	ldi	r25, 0x9C	; 156
+  4e:	90 93 87 00 	sts	0x0087, r25	; 0x800087 <__TEXT_REGION_LENGTH__+0x7fe087>
+  52:	80 93 86 00 	sts	0x0086, r24	; 0x800086 <__TEXT_REGION_LENGTH__+0x7fe086>
+	// Target Frequency = 50 Hz
+
+	TCCR1A|=(0<<COM1A0)|(1<<COM1A1)|(0<<COM1B0)|(0<<COM1B1)|(0<<FOC1A)|(0<<FOC1B)|(1<<WGM11)|(0<<WGM10);
+  56:	e0 e8       	ldi	r30, 0x80	; 128
+  58:	f0 e0       	ldi	r31, 0x00	; 0
+  5a:	80 81       	ld	r24, Z
+  5c:	82 68       	ori	r24, 0x82	; 130
+  5e:	80 83       	st	Z, r24
+	TCCR1B|=(0<<ICNC1)|(0<<ICES1)|(1<<WGM13)|(1<<WGM12)|(0<<CS12)|(1<<CS11)|(0<<CS10);
+  60:	e1 e8       	ldi	r30, 0x81	; 129
+  62:	f0 e0       	ldi	r31, 0x00	; 0
+  64:	80 81       	ld	r24, Z
+  66:	8a 61       	ori	r24, 0x1A	; 26
+  68:	80 83       	st	Z, r24
+
+	OCR1A=1200; // Starting Pulse Duration = (Clock Speed  / prescaler) * 0.6 ms = (16,000,000 / 8) * .0006 = 1200
+  6a:	80 eb       	ldi	r24, 0xB0	; 176
+  6c:	94 e0       	ldi	r25, 0x04	; 4
+  6e:	90 93 89 00 	sts	0x0089, r25	; 0x800089 <__TEXT_REGION_LENGTH__+0x7fe089>
+  72:	80 93 88 00 	sts	0x0088, r24	; 0x800088 <__TEXT_REGION_LENGTH__+0x7fe088>
+
+	while(1)
+	{
+		OCR1A+=10;
+  76:	e8 e8       	ldi	r30, 0x88	; 136
+  78:	f0 e0       	ldi	r31, 0x00	; 0
+  7a:	80 81       	ld	r24, Z
+  7c:	91 81       	ldd	r25, Z+1	; 0x01
+  7e:	0a 96       	adiw	r24, 0x0a	; 10
+  80:	91 83       	std	Z+1, r25	; 0x01
+  82:	80 83       	st	Z, r24
+	#else
+		//round up by default
+		__ticks_dc = (uint32_t)(ceil(fabs(__tmp)));
+	#endif
+
+	__builtin_avr_delay_cycles(__ticks_dc);
+  84:	8f e3       	ldi	r24, 0x3F	; 63
+  86:	9c e9       	ldi	r25, 0x9C	; 156
+  88:	01 97       	sbiw	r24, 0x01	; 1
+  8a:	f1 f7       	brne	.-4      	; 0x88 <main+0x42>
+  8c:	00 c0       	rjmp	.+0      	; 0x8e <main+0x48>
+  8e:	00 00       	nop
+		_delay_ms(10);   // 10ms delay between changes
+		if(OCR1A > 4800) // Ending Pulse Duration = (Clock Speed  / prescaler) * 2.4 ms = (16,000,000 / 8) * .0024 = 4800
+  90:	80 81       	ld	r24, Z
+  92:	91 81       	ldd	r25, Z+1	; 0x01
+  94:	81 3c       	cpi	r24, 0xC1	; 193
+  96:	92 41       	sbci	r25, 0x12	; 18
+  98:	70 f3       	brcs	.-36     	; 0x76 <main+0x30>
+		{
+			OCR1A = 1200;
+  9a:	80 eb       	ldi	r24, 0xB0	; 176
+  9c:	94 e0       	ldi	r25, 0x04	; 4
+  9e:	90 93 89 00 	sts	0x0089, r25	; 0x800089 <__TEXT_REGION_LENGTH__+0x7fe089>
+  a2:	80 93 88 00 	sts	0x0088, r24	; 0x800088 <__TEXT_REGION_LENGTH__+0x7fe088>
+			for ( ii = 0 ; ii < 100 ; ii++){_delay_ms(10);} // Long delay for servo to return to zero
+  a6:	80 e0       	ldi	r24, 0x00	; 0
+  a8:	90 e0       	ldi	r25, 0x00	; 0
+  aa:	07 c0       	rjmp	.+14     	; 0xba <main+0x74>
+  ac:	ef e3       	ldi	r30, 0x3F	; 63
+  ae:	fc e9       	ldi	r31, 0x9C	; 156
+  b0:	31 97       	sbiw	r30, 0x01	; 1
+  b2:	f1 f7       	brne	.-4      	; 0xb0 <main+0x6a>
+  b4:	00 c0       	rjmp	.+0      	; 0xb6 <main+0x70>
+  b6:	00 00       	nop
+  b8:	01 96       	adiw	r24, 0x01	; 1
+  ba:	84 36       	cpi	r24, 0x64	; 100
+  bc:	91 05       	cpc	r25, r1
+  be:	b4 f3       	brlt	.-20     	; 0xac <main+0x66>
+  c0:	da cf       	rjmp	.-76     	; 0x76 <main+0x30>
+
+000000c2 <_exit>:
+  c2:	f8 94       	cli
+
+000000c4 <__stop_program>:
+  c4:	ff cf       	rjmp	.-2      	; 0xc4 <__stop_program>
