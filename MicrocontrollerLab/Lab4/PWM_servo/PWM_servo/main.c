@@ -31,9 +31,9 @@ int main(void)
 	{
 		OCR1A+=10;
 		_delay_ms(10);   // 10ms delay between changes
-		if(OCR1A > 4800) // Ending Pulse Duration = (Clock Speed  / prescaler) * 2.4 ms = (16,000,000 / 8) * .0024 = 4800
+		if(OCR1A > 8000) // Ending Pulse Duration = (Clock Speed  / prescaler) * 2.4 ms = (16,000,000 / 8) * .0024 = 4800
 		{
-			OCR1A = 1200;
+			OCR1A = 2000;
 			for ( ii = 0 ; ii < 100 ; ii++){_delay_ms(10);} // Long delay for servo to return to zero
 		}
 	}
