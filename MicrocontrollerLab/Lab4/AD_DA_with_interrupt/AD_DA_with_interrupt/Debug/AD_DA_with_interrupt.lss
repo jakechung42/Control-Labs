@@ -1,0 +1,263 @@
+
+AD_DA_with_interrupt.elf:     file format elf32-avr
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .data         00000000  00800100  00800100  000001be  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+  1 .text         0000014a  00000000  00000000  00000074  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  2 .bss          00000005  00800100  00800100  000001be  2**0
+                  ALLOC
+  3 .comment      00000030  00000000  00000000  000001be  2**0
+                  CONTENTS, READONLY
+  4 .note.gnu.avr.deviceinfo 00000040  00000000  00000000  000001f0  2**2
+                  CONTENTS, READONLY
+  5 .debug_aranges 00000030  00000000  00000000  00000230  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  6 .debug_info   0000072a  00000000  00000000  00000260  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  7 .debug_abbrev 00000659  00000000  00000000  0000098a  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  8 .debug_line   00000284  00000000  00000000  00000fe3  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  9 .debug_frame  0000008c  00000000  00000000  00001268  2**2
+                  CONTENTS, READONLY, DEBUGGING
+ 10 .debug_str    000003b7  00000000  00000000  000012f4  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 11 .debug_loc    000000ea  00000000  00000000  000016ab  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 12 .debug_ranges 00000020  00000000  00000000  00001795  2**0
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .text:
+
+00000000 <__vectors>:
+   0:	19 c0       	rjmp	.+50     	; 0x34 <__ctors_end>
+   2:	28 c0       	rjmp	.+80     	; 0x54 <__bad_interrupt>
+   4:	27 c0       	rjmp	.+78     	; 0x54 <__bad_interrupt>
+   6:	26 c0       	rjmp	.+76     	; 0x54 <__bad_interrupt>
+   8:	25 c0       	rjmp	.+74     	; 0x54 <__bad_interrupt>
+   a:	24 c0       	rjmp	.+72     	; 0x54 <__bad_interrupt>
+   c:	23 c0       	rjmp	.+70     	; 0x54 <__bad_interrupt>
+   e:	22 c0       	rjmp	.+68     	; 0x54 <__bad_interrupt>
+  10:	21 c0       	rjmp	.+66     	; 0x54 <__bad_interrupt>
+  12:	20 c0       	rjmp	.+64     	; 0x54 <__bad_interrupt>
+  14:	1f c0       	rjmp	.+62     	; 0x54 <__bad_interrupt>
+  16:	47 c0       	rjmp	.+142    	; 0xa6 <__vector_11>
+  18:	1d c0       	rjmp	.+58     	; 0x54 <__bad_interrupt>
+  1a:	1c c0       	rjmp	.+56     	; 0x54 <__bad_interrupt>
+  1c:	1b c0       	rjmp	.+54     	; 0x54 <__bad_interrupt>
+  1e:	1a c0       	rjmp	.+52     	; 0x54 <__bad_interrupt>
+  20:	19 c0       	rjmp	.+50     	; 0x54 <__bad_interrupt>
+  22:	18 c0       	rjmp	.+48     	; 0x54 <__bad_interrupt>
+  24:	17 c0       	rjmp	.+46     	; 0x54 <__bad_interrupt>
+  26:	16 c0       	rjmp	.+44     	; 0x54 <__bad_interrupt>
+  28:	15 c0       	rjmp	.+42     	; 0x54 <__bad_interrupt>
+  2a:	14 c0       	rjmp	.+40     	; 0x54 <__bad_interrupt>
+  2c:	13 c0       	rjmp	.+38     	; 0x54 <__bad_interrupt>
+  2e:	12 c0       	rjmp	.+36     	; 0x54 <__bad_interrupt>
+  30:	11 c0       	rjmp	.+34     	; 0x54 <__bad_interrupt>
+  32:	10 c0       	rjmp	.+32     	; 0x54 <__bad_interrupt>
+
+00000034 <__ctors_end>:
+  34:	11 24       	eor	r1, r1
+  36:	1f be       	out	0x3f, r1	; 63
+  38:	cf ef       	ldi	r28, 0xFF	; 255
+  3a:	d4 e0       	ldi	r29, 0x04	; 4
+  3c:	de bf       	out	0x3e, r29	; 62
+  3e:	cd bf       	out	0x3d, r28	; 61
+
+00000040 <__do_clear_bss>:
+  40:	21 e0       	ldi	r18, 0x01	; 1
+  42:	a0 e0       	ldi	r26, 0x00	; 0
+  44:	b1 e0       	ldi	r27, 0x01	; 1
+  46:	01 c0       	rjmp	.+2      	; 0x4a <.do_clear_bss_start>
+
+00000048 <.do_clear_bss_loop>:
+  48:	1d 92       	st	X+, r1
+
+0000004a <.do_clear_bss_start>:
+  4a:	a5 30       	cpi	r26, 0x05	; 5
+  4c:	b2 07       	cpc	r27, r18
+  4e:	e1 f7       	brne	.-8      	; 0x48 <.do_clear_bss_loop>
+  50:	08 d0       	rcall	.+16     	; 0x62 <main>
+  52:	79 c0       	rjmp	.+242    	; 0x146 <_exit>
+
+00000054 <__bad_interrupt>:
+  54:	d5 cf       	rjmp	.-86     	; 0x0 <__vectors>
+
+00000056 <spi_write_read>:
+unsigned int adc_output;
+
+// SPI write read function
+unsigned char spi_write_read(unsigned char spi_data)
+{
+	SPDR=spi_data;
+  56:	8e bd       	out	0x2e, r24	; 46
+	while ((SPSR & (1<<SPIF))==0);	// Wait until the data transfer is complete
+  58:	0d b4       	in	r0, 0x2d	; 45
+  5a:	07 fe       	sbrs	r0, 7
+  5c:	fd cf       	rjmp	.-6      	; 0x58 <spi_write_read+0x2>
+	return SPDR;
+  5e:	8e b5       	in	r24, 0x2e	; 46
+}
+  60:	08 95       	ret
+
+00000062 <main>:
+
+int main (void)
+{
+	DDRB=0b00101100;	//Set Output Ports for the SPI Interface
+  62:	8c e2       	ldi	r24, 0x2C	; 44
+  64:	84 b9       	out	0x04, r24	; 4
+	DDRD=0b10000000;	//Set Output Ports for the Chip select
+  66:	80 e8       	ldi	r24, 0x80	; 128
+  68:	8a b9       	out	0x0a, r24	; 10
+	// SPI initialization
+	SPCR=0b01010010;
+  6a:	82 e5       	ldi	r24, 0x52	; 82
+  6c:	8c bd       	out	0x2c, r24	; 44
+	SPSR=0b00000001;
+  6e:	81 e0       	ldi	r24, 0x01	; 1
+  70:	8d bd       	out	0x2d, r24	; 45
+	//ADC set up
+	ADMUX  = 0b00000000; //Input on AD Channel 0
+  72:	10 92 7c 00 	sts	0x007C, r1	; 0x80007c <__TEXT_REGION_LENGTH__+0x7fe07c>
+	ADCSRA = 0b10000011; // ADC on, /8 for a 16 MHz clock, interrupt off
+  76:	83 e8       	ldi	r24, 0x83	; 131
+  78:	80 93 7a 00 	sts	0x007A, r24	; 0x80007a <__TEXT_REGION_LENGTH__+0x7fe07a>
+
+	//Interrupt counter set up
+	TCCR1B |= (1 << WGM12); // Configure timer 1 for CTC mode
+  7c:	e1 e8       	ldi	r30, 0x81	; 129
+  7e:	f0 e0       	ldi	r31, 0x00	; 0
+  80:	80 81       	ld	r24, Z
+  82:	88 60       	ori	r24, 0x08	; 8
+  84:	80 83       	st	Z, r24
+	TIMSK1 |= (1 << OCIE1A); // Enable CTC interrupt
+  86:	af e6       	ldi	r26, 0x6F	; 111
+  88:	b0 e0       	ldi	r27, 0x00	; 0
+  8a:	8c 91       	ld	r24, X
+  8c:	82 60       	ori	r24, 0x02	; 2
+  8e:	8c 93       	st	X, r24
+
+	sei(); // Enable global interrupts
+  90:	78 94       	sei
+
+	// OCR1A = Target_Timer_Count = (Clock_Frequency / (Prescale * Target_Frequency)) - 1
+
+	OCR1A = 7999;   //Set CTC compare value to 1kHz at 8MHz AVR clock, with a prescaler of 1
+  92:	8f e3       	ldi	r24, 0x3F	; 63
+  94:	9f e1       	ldi	r25, 0x1F	; 31
+  96:	90 93 89 00 	sts	0x0089, r25	; 0x800089 <__TEXT_REGION_LENGTH__+0x7fe089>
+  9a:	80 93 88 00 	sts	0x0088, r24	; 0x800088 <__TEXT_REGION_LENGTH__+0x7fe088>
+
+	//Prescaler Fcpu/1 to get 1kHz 
+	TCCR1B = TCCR1B | (1 << CS10);
+  9e:	80 81       	ld	r24, Z
+  a0:	81 60       	ori	r24, 0x01	; 1
+  a2:	80 83       	st	Z, r24
+  a4:	ff cf       	rjmp	.-2      	; 0xa4 <main+0x42>
+
+000000a6 <__vector_11>:
+		// Does nothing and wait for counter	
+	}
+}
+
+ISR(TIMER1_COMPA_vect)
+{
+  a6:	1f 92       	push	r1
+  a8:	0f 92       	push	r0
+  aa:	0f b6       	in	r0, 0x3f	; 63
+  ac:	0f 92       	push	r0
+  ae:	11 24       	eor	r1, r1
+  b0:	2f 93       	push	r18
+  b2:	3f 93       	push	r19
+  b4:	4f 93       	push	r20
+  b6:	5f 93       	push	r21
+  b8:	6f 93       	push	r22
+  ba:	7f 93       	push	r23
+  bc:	8f 93       	push	r24
+  be:	9f 93       	push	r25
+  c0:	af 93       	push	r26
+  c2:	bf 93       	push	r27
+  c4:	ef 93       	push	r30
+  c6:	ff 93       	push	r31
+	//Start the AD DA process on interrupt counter
+
+	//ADC process
+	ADCSRA = ADCSRA | 0b01000000;  // Start AD conversion, this or gate only flips ADSC
+  c8:	ea e7       	ldi	r30, 0x7A	; 122
+  ca:	f0 e0       	ldi	r31, 0x00	; 0
+  cc:	80 81       	ld	r24, Z
+  ce:	80 64       	ori	r24, 0x40	; 64
+  d0:	80 83       	st	Z, r24
+	while ((ADCSRA & 0b01000000) == 0b01000000); // Wait while AD conversion is executed
+  d2:	80 91 7a 00 	lds	r24, 0x007A	; 0x80007a <__TEXT_REGION_LENGTH__+0x7fe07a>
+  d6:	86 fd       	sbrc	r24, 6
+  d8:	fc cf       	rjmp	.-8      	; 0xd2 <__vector_11+0x2c>
+	adc_output = ADCW;
+  da:	80 91 78 00 	lds	r24, 0x0078	; 0x800078 <__TEXT_REGION_LENGTH__+0x7fe078>
+  de:	90 91 79 00 	lds	r25, 0x0079	; 0x800079 <__TEXT_REGION_LENGTH__+0x7fe079>
+	adc_output = adc_output << 2;
+  e2:	88 0f       	add	r24, r24
+  e4:	99 1f       	adc	r25, r25
+  e6:	88 0f       	add	r24, r24
+  e8:	99 1f       	adc	r25, r25
+  ea:	90 93 03 01 	sts	0x0103, r25	; 0x800103 <adc_output+0x1>
+  ee:	80 93 02 01 	sts	0x0102, r24	; 0x800102 <adc_output>
+
+	//SPI process
+	spi_data_0 = 0x00;
+	spi_data_0 = (adc_output & 0x0F00) >> 8;  //Set up first byte to write
+  f2:	9c 01       	movw	r18, r24
+  f4:	22 27       	eor	r18, r18
+  f6:	3f 70       	andi	r19, 0x0F	; 15
+	spi_data_0 = spi_data_0 + 0b00110000;
+  f8:	90 e3       	ldi	r25, 0x30	; 48
+  fa:	93 0f       	add	r25, r19
+  fc:	90 93 04 01 	sts	0x0104, r25	; 0x800104 <spi_data_0>
+	spi_data_1 = (adc_output & 0xFF);  //Set up second byte to write
+ 100:	80 93 00 01 	sts	0x0100, r24	; 0x800100 <_edata>
+
+	cbi(PORTD,7);								// Activate the chip - set chip select to zero
+ 104:	8b b1       	in	r24, 0x0b	; 11
+ 106:	8f 77       	andi	r24, 0x7F	; 127
+ 108:	8b b9       	out	0x0b, r24	; 11
+	dummy_read = spi_write_read(spi_data_0);	// Write/Read first byte
+ 10a:	80 91 04 01 	lds	r24, 0x0104	; 0x800104 <spi_data_0>
+ 10e:	a3 df       	rcall	.-186    	; 0x56 <spi_write_read>
+ 110:	80 93 01 01 	sts	0x0101, r24	; 0x800101 <dummy_read>
+	dummy_read = spi_write_read(spi_data_1);  	// Write/Read second byte
+ 114:	80 91 00 01 	lds	r24, 0x0100	; 0x800100 <_edata>
+ 118:	9e df       	rcall	.-196    	; 0x56 <spi_write_read>
+ 11a:	80 93 01 01 	sts	0x0101, r24	; 0x800101 <dummy_read>
+	sbi(PORTD,7);	
+ 11e:	8b b1       	in	r24, 0x0b	; 11
+ 120:	80 68       	ori	r24, 0x80	; 128
+ 122:	8b b9       	out	0x0b, r24	; 11
+}
+ 124:	ff 91       	pop	r31
+ 126:	ef 91       	pop	r30
+ 128:	bf 91       	pop	r27
+ 12a:	af 91       	pop	r26
+ 12c:	9f 91       	pop	r25
+ 12e:	8f 91       	pop	r24
+ 130:	7f 91       	pop	r23
+ 132:	6f 91       	pop	r22
+ 134:	5f 91       	pop	r21
+ 136:	4f 91       	pop	r20
+ 138:	3f 91       	pop	r19
+ 13a:	2f 91       	pop	r18
+ 13c:	0f 90       	pop	r0
+ 13e:	0f be       	out	0x3f, r0	; 63
+ 140:	0f 90       	pop	r0
+ 142:	1f 90       	pop	r1
+ 144:	18 95       	reti
+
+00000146 <_exit>:
+ 146:	f8 94       	cli
+
+00000148 <__stop_program>:
+ 148:	ff cf       	rjmp	.-2      	; 0x148 <__stop_program>
