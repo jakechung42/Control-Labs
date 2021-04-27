@@ -1,0 +1,178 @@
+
+PWM_DC_Motor.elf:     file format elf32-avr
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .data         00000000  00800100  00800100  00000124  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+  1 .text         000000d0  00000000  00000000  00000054  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  2 .comment      00000030  00000000  00000000  00000124  2**0
+                  CONTENTS, READONLY
+  3 .note.gnu.avr.deviceinfo 0000003c  00000000  00000000  00000154  2**2
+                  CONTENTS, READONLY
+  4 .debug_aranges 00000020  00000000  00000000  00000190  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  5 .debug_info   00000743  00000000  00000000  000001b0  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  6 .debug_abbrev 0000068a  00000000  00000000  000008f3  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  7 .debug_line   00000268  00000000  00000000  00000f7d  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  8 .debug_frame  00000024  00000000  00000000  000011e8  2**2
+                  CONTENTS, READONLY, DEBUGGING
+  9 .debug_str    000003a2  00000000  00000000  0000120c  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 10 .debug_loc    00000048  00000000  00000000  000015ae  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 11 .debug_ranges 00000010  00000000  00000000  000015f6  2**0
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .text:
+
+00000000 <__vectors>:
+   0:	19 c0       	rjmp	.+50     	; 0x34 <__ctors_end>
+   2:	20 c0       	rjmp	.+64     	; 0x44 <__bad_interrupt>
+   4:	1f c0       	rjmp	.+62     	; 0x44 <__bad_interrupt>
+   6:	1e c0       	rjmp	.+60     	; 0x44 <__bad_interrupt>
+   8:	1d c0       	rjmp	.+58     	; 0x44 <__bad_interrupt>
+   a:	1c c0       	rjmp	.+56     	; 0x44 <__bad_interrupt>
+   c:	1b c0       	rjmp	.+54     	; 0x44 <__bad_interrupt>
+   e:	1a c0       	rjmp	.+52     	; 0x44 <__bad_interrupt>
+  10:	19 c0       	rjmp	.+50     	; 0x44 <__bad_interrupt>
+  12:	18 c0       	rjmp	.+48     	; 0x44 <__bad_interrupt>
+  14:	17 c0       	rjmp	.+46     	; 0x44 <__bad_interrupt>
+  16:	16 c0       	rjmp	.+44     	; 0x44 <__bad_interrupt>
+  18:	15 c0       	rjmp	.+42     	; 0x44 <__bad_interrupt>
+  1a:	14 c0       	rjmp	.+40     	; 0x44 <__bad_interrupt>
+  1c:	13 c0       	rjmp	.+38     	; 0x44 <__bad_interrupt>
+  1e:	12 c0       	rjmp	.+36     	; 0x44 <__bad_interrupt>
+  20:	11 c0       	rjmp	.+34     	; 0x44 <__bad_interrupt>
+  22:	10 c0       	rjmp	.+32     	; 0x44 <__bad_interrupt>
+  24:	0f c0       	rjmp	.+30     	; 0x44 <__bad_interrupt>
+  26:	0e c0       	rjmp	.+28     	; 0x44 <__bad_interrupt>
+  28:	0d c0       	rjmp	.+26     	; 0x44 <__bad_interrupt>
+  2a:	0c c0       	rjmp	.+24     	; 0x44 <__bad_interrupt>
+  2c:	0b c0       	rjmp	.+22     	; 0x44 <__bad_interrupt>
+  2e:	0a c0       	rjmp	.+20     	; 0x44 <__bad_interrupt>
+  30:	09 c0       	rjmp	.+18     	; 0x44 <__bad_interrupt>
+  32:	08 c0       	rjmp	.+16     	; 0x44 <__bad_interrupt>
+
+00000034 <__ctors_end>:
+  34:	11 24       	eor	r1, r1
+  36:	1f be       	out	0x3f, r1	; 63
+  38:	cf ef       	ldi	r28, 0xFF	; 255
+  3a:	d4 e0       	ldi	r29, 0x04	; 4
+  3c:	de bf       	out	0x3e, r29	; 62
+  3e:	cd bf       	out	0x3d, r28	; 61
+  40:	02 d0       	rcall	.+4      	; 0x46 <main>
+  42:	44 c0       	rjmp	.+136    	; 0xcc <_exit>
+
+00000044 <__bad_interrupt>:
+  44:	dd cf       	rjmp	.-70     	; 0x0 <__vectors>
+
+00000046 <main>:
+void _delay_ms ( double __ms ); // Delay milliseconds
+
+int main(void)
+{
+	//int ii;
+	DDRB=0xFF; //Set PORTB1 pin as output
+  46:	8f ef       	ldi	r24, 0xFF	; 255
+  48:	84 b9       	out	0x04, r24	; 4
+	DDRC=0b00100011; //Set PORTC pin as output
+  4a:	83 e2       	ldi	r24, 0x23	; 35
+  4c:	87 b9       	out	0x07, r24	; 7
+	//Fast PWM
+	//ICR1=2000 defines 1000Hz PWM (clock frequency/prescaler)/(target frequency)
+	//for a 16 MHz clock frequency, a prescaler of 8 and a target frequency of 1000 Hz
+	//Start timer with prescaler 8
+
+	ICR1=2000; // PWM Count = Clock Speed / (Target Frequency * prescaler) = 16,000,000/(1000*8) = 2000
+  4e:	80 ed       	ldi	r24, 0xD0	; 208
+  50:	97 e0       	ldi	r25, 0x07	; 7
+  52:	90 93 87 00 	sts	0x0087, r25	; 0x800087 <__TEXT_REGION_LENGTH__+0x7fe087>
+  56:	80 93 86 00 	sts	0x0086, r24	; 0x800086 <__TEXT_REGION_LENGTH__+0x7fe086>
+	// Target Frequency = 1000 Hz
+
+	TCCR1A|=(0<<COM1A0)|(1<<COM1A1)|(0<<COM1B0)|(0<<COM1B1)|(0<<FOC1A)|(0<<FOC1B)|(1<<WGM11)|(0<<WGM10);
+  5a:	e0 e8       	ldi	r30, 0x80	; 128
+  5c:	f0 e0       	ldi	r31, 0x00	; 0
+  5e:	80 81       	ld	r24, Z
+  60:	82 68       	ori	r24, 0x82	; 130
+  62:	80 83       	st	Z, r24
+	TCCR1B|=(0<<ICNC1)|(0<<ICES1)|(1<<WGM13)|(1<<WGM12)|(0<<CS12)|(1<<CS11)|(0<<CS10);
+  64:	e1 e8       	ldi	r30, 0x81	; 129
+  66:	f0 e0       	ldi	r31, 0x00	; 0
+  68:	80 81       	ld	r24, Z
+  6a:	8a 61       	ori	r24, 0x1A	; 26
+  6c:	80 83       	st	Z, r24
+
+	OCR1A=100; // Starting Duty length
+  6e:	84 e6       	ldi	r24, 0x64	; 100
+  70:	90 e0       	ldi	r25, 0x00	; 0
+  72:	90 93 89 00 	sts	0x0089, r25	; 0x800089 <__TEXT_REGION_LENGTH__+0x7fe089>
+  76:	80 93 88 00 	sts	0x0088, r24	; 0x800088 <__TEXT_REGION_LENGTH__+0x7fe088>
+
+	PORTC = 0b00000010;  // Set initial value of the direction pins (P0 and P1)
+  7a:	82 e0       	ldi	r24, 0x02	; 2
+  7c:	88 b9       	out	0x08, r24	; 8
+
+	while(1)
+	{
+		OCR1A+=2;
+  7e:	e8 e8       	ldi	r30, 0x88	; 136
+  80:	f0 e0       	ldi	r31, 0x00	; 0
+  82:	80 81       	ld	r24, Z
+  84:	91 81       	ldd	r25, Z+1	; 0x01
+  86:	02 96       	adiw	r24, 0x02	; 2
+  88:	91 83       	std	Z+1, r25	; 0x01
+  8a:	80 83       	st	Z, r24
+	#else
+		//round up by default
+		__ticks_dc = (uint32_t)(ceil(fabs(__tmp)));
+	#endif
+
+	__builtin_avr_delay_cycles(__ticks_dc);
+  8c:	8f e3       	ldi	r24, 0x3F	; 63
+  8e:	9c e9       	ldi	r25, 0x9C	; 156
+  90:	01 97       	sbiw	r24, 0x01	; 1
+  92:	f1 f7       	brne	.-4      	; 0x90 <main+0x4a>
+  94:	00 c0       	rjmp	.+0      	; 0x96 <main+0x50>
+  96:	00 00       	nop
+		_delay_ms(10);          // 10ms delay between changes
+		PORTC ^= 0b00100000;    //blink LED
+  98:	98 b1       	in	r25, 0x08	; 8
+  9a:	80 e2       	ldi	r24, 0x20	; 32
+  9c:	89 27       	eor	r24, r25
+  9e:	88 b9       	out	0x08, r24	; 8
+		if(OCR1A > 1500)
+  a0:	80 81       	ld	r24, Z
+  a2:	91 81       	ldd	r25, Z+1	; 0x01
+  a4:	8d 3d       	cpi	r24, 0xDD	; 221
+  a6:	95 40       	sbci	r25, 0x05	; 5
+  a8:	50 f3       	brcs	.-44     	; 0x7e <main+0x38>
+		{
+			OCR1A = 100;
+  aa:	84 e6       	ldi	r24, 0x64	; 100
+  ac:	90 e0       	ldi	r25, 0x00	; 0
+  ae:	90 93 89 00 	sts	0x0089, r25	; 0x800089 <__TEXT_REGION_LENGTH__+0x7fe089>
+  b2:	80 93 88 00 	sts	0x0088, r24	; 0x800088 <__TEXT_REGION_LENGTH__+0x7fe088>
+			PORTC ^= 0b00000011; // Reverse Direction using XOR, this toggles bits P0 and P1
+  b6:	98 b1       	in	r25, 0x08	; 8
+  b8:	83 e0       	ldi	r24, 0x03	; 3
+  ba:	89 27       	eor	r24, r25
+  bc:	88 b9       	out	0x08, r24	; 8
+  be:	8f e3       	ldi	r24, 0x3F	; 63
+  c0:	9c e9       	ldi	r25, 0x9C	; 156
+  c2:	01 97       	sbiw	r24, 0x01	; 1
+  c4:	f1 f7       	brne	.-4      	; 0xc2 <main+0x7c>
+  c6:	00 c0       	rjmp	.+0      	; 0xc8 <main+0x82>
+  c8:	00 00       	nop
+  ca:	d9 cf       	rjmp	.-78     	; 0x7e <main+0x38>
+
+000000cc <_exit>:
+  cc:	f8 94       	cli
+
+000000ce <__stop_program>:
+  ce:	ff cf       	rjmp	.-2      	; 0xce <__stop_program>
