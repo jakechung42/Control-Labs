@@ -28,21 +28,15 @@ int main(void)
 	TCCR1A|=(0<<COM1A0)|(1<<COM1A1)|(0<<COM1B0)|(0<<COM1B1)|(1<<WGM11)|(0<<WGM10);
 	TCCR1B|=(0<<ICNC1)|(0<<ICES1)|(1<<WGM13)|(1<<WGM12)|(0<<CS12)|(1<<CS11)|(0<<CS10);
 
-	OCR1A=1000; // Starting Duty length
+	OCR1A=1500; // Starting Duty length
 
 	PORTC = 0b00000010;  // Set initial value of the direction pins (P0 and P1)
 
 	while(1)
 	{
-		OCR1A+=2;
-		_delay_ms(10);          // 10ms delay between changes
-		PORTC ^= 0b00100000;    //blink LED
-		if(OCR1A > 2000)
-		{
-			OCR1A = 1000;
-			PORTC ^= 0b00000011; // Reverse Direction using XOR, this toggles bits P0 and P1
-			_delay_ms(10);       // 10ms delay between changes
-		}
+
+		PORTC ^= 0b00000011; // Reverse Direction using XOR, this toggles bits P0 and P1
+		_delay_ms(500);       // 500ms delay to switch direction
 	}
 	return(0);
 }
