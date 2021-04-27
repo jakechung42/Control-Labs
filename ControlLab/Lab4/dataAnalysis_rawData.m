@@ -14,9 +14,9 @@ w_data = f_data*2*pi;
 
 %% Find the transfer function that fit the experimental data
 Ktotal = 2;
-freqn = 50;
+freqn = 55;
 omegan = 2*pi*freqn;
-zeta = 1.9;
+zeta = 2.5;
 
 %define the system
 num = Ktotal*omegan^2;
@@ -65,7 +65,7 @@ V_in_step = A(:,2);
 V_out_step = A(:,3);
 
 %normalize the response from oscope
-t_step = t_step + 0.5;
+t_step = t_step + 0.4981;
 V_out_step = V_out_step + 3.67;
 V_in_step = V_in_step + 2;
 
