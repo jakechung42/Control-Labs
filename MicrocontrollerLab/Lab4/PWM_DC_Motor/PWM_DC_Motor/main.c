@@ -23,10 +23,12 @@ int main(void)
 	ICR1=2000; // PWM Count = Clock Speed / (Target Frequency * prescaler) = 16,000,000/(1000*8) = 2000
 	// Target Frequency = 1000 Hz
 
-	TCCR1A|=(0<<COM1A0)|(1<<COM1A1)|(0<<COM1B0)|(0<<COM1B1)|(0<<FOC1A)|(0<<FOC1B)|(1<<WGM11)|(0<<WGM10);
+	//FOC1A and FOC1B don't seem to be specified in this register. Change TCCR1A to match documentation
+	//TCCR1A|=(0<<COM1A0)|(1<<COM1A1)|(0<<COM1B0)|(0<<COM1B1)|(0<<FOC1A)|(0<<FOC1B)|(1<<WGM11)|(0<<WGM10);
+	TCCR1A|=(0<<COM1A0)|(1<<COM1A1)|(0<<COM1B0)|(0<<COM1B1)|(1<<WGM11)|(0<<WGM10);
 	TCCR1B|=(0<<ICNC1)|(0<<ICES1)|(1<<WGM13)|(1<<WGM12)|(0<<CS12)|(1<<CS11)|(0<<CS10);
 
-	OCR1A=100; // Starting Duty length
+	OCR1A=1000; // Starting Duty length
 
 	PORTC = 0b00000010;  // Set initial value of the direction pins (P0 and P1)
 
@@ -35,9 +37,9 @@ int main(void)
 		OCR1A+=2;
 		_delay_ms(10);          // 10ms delay between changes
 		PORTC ^= 0b00100000;    //blink LED
-		if(OCR1A > 1500)
+		if(OCR1A > 2000)
 		{
-			OCR1A = 100;
+			OCR1A = 1000;
 			PORTC ^= 0b00000011; // Reverse Direction using XOR, this toggles bits P0 and P1
 			_delay_ms(10);       // 10ms delay between changes
 		}

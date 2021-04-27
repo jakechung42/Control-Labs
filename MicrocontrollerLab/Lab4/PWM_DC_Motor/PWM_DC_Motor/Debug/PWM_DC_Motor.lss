@@ -95,7 +95,9 @@ int main(void)
   56:	80 93 86 00 	sts	0x0086, r24	; 0x800086 <__TEXT_REGION_LENGTH__+0x7fe086>
 	// Target Frequency = 1000 Hz
 
-	TCCR1A|=(0<<COM1A0)|(1<<COM1A1)|(0<<COM1B0)|(0<<COM1B1)|(0<<FOC1A)|(0<<FOC1B)|(1<<WGM11)|(0<<WGM10);
+	//FOC1A and FOC1B don't seem to be specified in this register. Change TCCR1A to match documentation
+	//TCCR1A|=(0<<COM1A0)|(1<<COM1A1)|(0<<COM1B0)|(0<<COM1B1)|(0<<FOC1A)|(0<<FOC1B)|(1<<WGM11)|(0<<WGM10);
+	TCCR1A|=(0<<COM1A0)|(1<<COM1A1)|(0<<COM1B0)|(0<<COM1B1)|(1<<WGM11)|(0<<WGM10);
   5a:	e0 e8       	ldi	r30, 0x80	; 128
   5c:	f0 e0       	ldi	r31, 0x00	; 0
   5e:	80 81       	ld	r24, Z
@@ -108,9 +110,9 @@ int main(void)
   6a:	8a 61       	ori	r24, 0x1A	; 26
   6c:	80 83       	st	Z, r24
 
-	OCR1A=100; // Starting Duty length
-  6e:	84 e6       	ldi	r24, 0x64	; 100
-  70:	90 e0       	ldi	r25, 0x00	; 0
+	OCR1A=1000; // Starting Duty length
+  6e:	88 ee       	ldi	r24, 0xE8	; 232
+  70:	93 e0       	ldi	r25, 0x03	; 3
   72:	90 93 89 00 	sts	0x0089, r25	; 0x800089 <__TEXT_REGION_LENGTH__+0x7fe089>
   76:	80 93 88 00 	sts	0x0088, r24	; 0x800088 <__TEXT_REGION_LENGTH__+0x7fe088>
 
@@ -146,16 +148,16 @@ int main(void)
   9a:	80 e2       	ldi	r24, 0x20	; 32
   9c:	89 27       	eor	r24, r25
   9e:	88 b9       	out	0x08, r24	; 8
-		if(OCR1A > 1500)
+		if(OCR1A > 2000)
   a0:	80 81       	ld	r24, Z
   a2:	91 81       	ldd	r25, Z+1	; 0x01
-  a4:	8d 3d       	cpi	r24, 0xDD	; 221
-  a6:	95 40       	sbci	r25, 0x05	; 5
+  a4:	81 3d       	cpi	r24, 0xD1	; 209
+  a6:	97 40       	sbci	r25, 0x07	; 7
   a8:	50 f3       	brcs	.-44     	; 0x7e <main+0x38>
 		{
-			OCR1A = 100;
-  aa:	84 e6       	ldi	r24, 0x64	; 100
-  ac:	90 e0       	ldi	r25, 0x00	; 0
+			OCR1A = 1000;
+  aa:	88 ee       	ldi	r24, 0xE8	; 232
+  ac:	93 e0       	ldi	r25, 0x03	; 3
   ae:	90 93 89 00 	sts	0x0089, r25	; 0x800089 <__TEXT_REGION_LENGTH__+0x7fe089>
   b2:	80 93 88 00 	sts	0x0088, r24	; 0x800088 <__TEXT_REGION_LENGTH__+0x7fe088>
 			PORTC ^= 0b00000011; // Reverse Direction using XOR, this toggles bits P0 and P1
