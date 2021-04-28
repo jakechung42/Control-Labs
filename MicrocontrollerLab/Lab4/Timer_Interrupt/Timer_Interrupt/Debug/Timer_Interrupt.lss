@@ -77,44 +77,43 @@ Disassembly of section .text:
 
 int main (void)
 {
-	DDRC = (1 << 5); // Set Pin 5 on Port C as output
+DDRC = (1 << 5); // Set Pin 5 on Port C as output
   46:	80 e2       	ldi	r24, 0x20	; 32
   48:	87 b9       	out	0x07, r24	; 7
 
-	TCCR1B |= (1 << WGM12); // Configure timer 1 for CTC mode
+TCCR1B |= (1 << WGM12); // Configure timer 1 for CTC mode
   4a:	e1 e8       	ldi	r30, 0x81	; 129
   4c:	f0 e0       	ldi	r31, 0x00	; 0
   4e:	80 81       	ld	r24, Z
   50:	88 60       	ori	r24, 0x08	; 8
   52:	80 83       	st	Z, r24
 
-	TIMSK1 |= (1 << OCIE1A); // Enable CTC interrupt
+TIMSK1 |= (1 << OCIE1A); // Enable CTC interrupt
   54:	af e6       	ldi	r26, 0x6F	; 111
   56:	b0 e0       	ldi	r27, 0x00	; 0
   58:	8c 91       	ld	r24, X
   5a:	82 60       	ori	r24, 0x02	; 2
   5c:	8c 93       	st	X, r24
 
-	sei(); // Enable global interrupts
+sei(); // Enable global interrupts
   5e:	78 94       	sei
 
-	// OCR1A = Target_Timer_Count = (Clock_Frequency / (Prescale * Target_Frequency)) - 1
+// OCR1A = Target_Timer_Count = (Clock_Frequency / (Prescale * Target_Frequency)) – 1
 
-	OCR1A = 31;   //Set CTC compare value to 1Hz at 1MHz AVR clock, with a prescaler of 64
-  60:	8f e1       	ldi	r24, 0x1F	; 31
-  62:	90 e0       	ldi	r25, 0x00	; 0
+OCR1A = 15624;   //Set CTC compare value to 1Hz at 1MHz AVR clock, with a prescaler of 64
+  60:	88 e0       	ldi	r24, 0x08	; 8
+  62:	9d e3       	ldi	r25, 0x3D	; 61
   64:	90 93 89 00 	sts	0x0089, r25	; 0x800089 <__TEXT_REGION_LENGTH__+0x7fe089>
   68:	80 93 88 00 	sts	0x0088, r24	; 0x800088 <__TEXT_REGION_LENGTH__+0x7fe088>
 
-	//Prescaler Fcpu/1 to get 1kHz and 5kHz counter
-	TCCR1B = TCCR1B | (1 << CS10);
+TCCR1B |= ((1 << CS10) | (1 << CS11)); // Start timer at Fcpu/64
   6c:	80 81       	ld	r24, Z
-  6e:	81 60       	ori	r24, 0x01	; 1
+  6e:	83 60       	ori	r24, 0x03	; 3
   70:	80 83       	st	Z, r24
   72:	ff cf       	rjmp	.-2      	; 0x72 <main+0x2c>
 
 00000074 <__vector_11>:
-	while(1){}
+while(1){}
 
 }
 
@@ -127,9 +126,9 @@ ISR(TIMER1_COMPA_vect)
   7c:	11 24       	eor	r1, r1
   7e:	8f 93       	push	r24
   80:	9f 93       	push	r25
-	// Place code here that should be executed when the interrupt occurs
+// Place code here that should be executed when the interrupt occurs
 
-	PORTC ^= (1 << 5); // Toggle Pin 5 on Port C
+PORTC ^= (1 << 5); // Toggle Pin 5 on Port C
   82:	98 b1       	in	r25, 0x08	; 8
   84:	80 e2       	ldi	r24, 0x20	; 32
   86:	89 27       	eor	r24, r25
