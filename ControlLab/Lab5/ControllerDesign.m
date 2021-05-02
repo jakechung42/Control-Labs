@@ -81,6 +81,7 @@ plot(-z_d*omegan_d, -sqrt(1-z_d^2)*omegan_d, 'd')
 hold off
 % K = abs(s2^2+1728*s2+1.194e5)/abs(2.388e5)
 K=0.2;
+
 num = K*2.388E5;
 den = [1 1728 1.194E5+K*2.388E5];
 sys = tf(num, den);
