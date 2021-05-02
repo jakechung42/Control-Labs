@@ -12,6 +12,7 @@ gain = 2;
 num = 2.388e5;
 den = [1 1728 1.194E5];
 rlocus(num, den)
+Gp = tf(num, den);
 
 %% design params
 %want PMO ~ 30%
