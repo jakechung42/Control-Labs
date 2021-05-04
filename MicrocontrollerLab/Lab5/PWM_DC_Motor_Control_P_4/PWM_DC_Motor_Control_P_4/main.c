@@ -85,7 +85,7 @@ int main (void)
 		
 		// Note if you have print statments active this will slow the control loop dramatically
 		
-		Vel_Set_v += .0001;
+		Vel_Set_v += .01;
 		if(Vel_Set_v >= 3.0) Vel_Set_v = -3.0;
 
 
@@ -93,7 +93,7 @@ int main (void)
 		while ((ADCSRA & 0b01000000) == 0b01000000); 	// Wait while AD conversion is executed
 
 		adc_input = ADCW; 									// Read AD value
-		adc_input_v = (float) adc_input*(20./1024.)- 10.0;	// Convert the adc_input digital value (0 to 1024) to a voltage
+		adc_input_v = (float) adc_input*(20.07/1024.)- 10.04;	// Convert the adc_input digital value (0 to 1024) to a voltage
 		// Note the input is bipolar +- 10.0 volts
 		// The terms in the equation above are for a  10 volt bipolar range.
 		// The (20.) term represents the bipolar range (+10 �(-10) = 20.) and
@@ -104,7 +104,7 @@ int main (void)
 		//adc_input_v = (float) adc_input*(19.3/1024.)- 9.65; // These are the measured values for my circuit,
 		// yours will be different.
 		
-		//printf("adc_input = %d   adc_input_v = %d\n",  // For Debugging only (slows the control loop down by a lot!)
+		// printf("adc_input = %d   adc_input_v = %d\n",  // For Debugging only (slows the control loop down by a lot!)
 		//        adc_input, (int) (adc_input_v*1000));  // Since adc_input_v is a float number it must be converted to an integer
 		// and scaled by 1000 to get a meaningful output
 
@@ -113,8 +113,8 @@ int main (void)
 		Control = Kp * Error;  						    // Control (units are voltage  +- 10 volts)
 		//Control = 5.0;
 
-		if(fabs(Control) >= Max_Voltage)				// Check Maximum voltage
-		Control = copysign(Max_Voltage,Control);
+		if(fabs(Control) >= Max_Voltage)				// Check Maximum voltage, fabs is basically absolute value
+		Control = copysign(Max_Voltage,Control);		// copysign copies returns a value with mag of first val and sign of second val
 
 		Control_HB = (float) (Control/12.0*1600.0);   // Convert the Control voltage to a H-Bridge output value between o and 1600
 

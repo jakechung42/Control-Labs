@@ -222,11 +222,11 @@ unsigned char spi_write_read(unsigned char spi_data)
 		
 		// Note if you have print statments active this will slow the control loop dramatically
 		
-		Vel_Set_v += .0001;
- 106:	27 e1       	ldi	r18, 0x17	; 23
- 108:	37 eb       	ldi	r19, 0xB7	; 183
- 10a:	41 ed       	ldi	r20, 0xD1	; 209
- 10c:	58 e3       	ldi	r21, 0x38	; 56
+		Vel_Set_v += .01;
+ 106:	2a e0       	ldi	r18, 0x0A	; 10
+ 108:	37 ed       	ldi	r19, 0xD7	; 215
+ 10a:	43 e2       	ldi	r20, 0x23	; 35
+ 10c:	5c e3       	ldi	r21, 0x3C	; 60
  10e:	c5 01       	movw	r24, r10
  110:	b4 01       	movw	r22, r8
  112:	a0 d0       	rcall	.+320    	; 0x254 <__addsf3>
@@ -264,23 +264,23 @@ unsigned char spi_write_read(unsigned char spi_data)
 		adc_input = ADCW; 									// Read AD value
  148:	60 91 78 00 	lds	r22, 0x0078	; 0x800078 <__TEXT_REGION_LENGTH__+0x7fe078>
  14c:	70 91 79 00 	lds	r23, 0x0079	; 0x800079 <__TEXT_REGION_LENGTH__+0x7fe079>
-		adc_input_v = (float) adc_input*(20./1024.)- 10.0;	// Convert the adc_input digital value (0 to 1024) to a voltage
+		adc_input_v = (float) adc_input*(20.07/1024.)- 10.04;	// Convert the adc_input digital value (0 to 1024) to a voltage
  150:	80 e0       	ldi	r24, 0x00	; 0
  152:	90 e0       	ldi	r25, 0x00	; 0
  154:	80 d1       	rcall	.+768    	; 0x456 <__floatunsisf>
- 156:	20 e0       	ldi	r18, 0x00	; 0
- 158:	30 e0       	ldi	r19, 0x00	; 0
+ 156:	2c e5       	ldi	r18, 0x5C	; 92
+ 158:	3f e8       	ldi	r19, 0x8F	; 143
  15a:	40 ea       	ldi	r20, 0xA0	; 160
  15c:	5c e3       	ldi	r21, 0x3C	; 60
  15e:	31 d2       	rcall	.+1122   	; 0x5c2 <__mulsf3>
- 160:	20 e0       	ldi	r18, 0x00	; 0
- 162:	30 e0       	ldi	r19, 0x00	; 0
+ 160:	27 ed       	ldi	r18, 0xD7	; 215
+ 162:	33 ea       	ldi	r19, 0xA3	; 163
  164:	40 e2       	ldi	r20, 0x20	; 32
  166:	51 e4       	ldi	r21, 0x41	; 65
  168:	74 d0       	rcall	.+232    	; 0x252 <__subsf3>
  16a:	9b 01       	movw	r18, r22
  16c:	ac 01       	movw	r20, r24
-		//printf("adc_input = %d   adc_input_v = %d\n",  // For Debugging only (slows the control loop down by a lot!)
+		// printf("adc_input = %d   adc_input_v = %d\n",  // For Debugging only (slows the control loop down by a lot!)
 		//        adc_input, (int) (adc_input_v*1000));  // Since adc_input_v is a float number it must be converted to an integer
 		// and scaled by 1000 to get a meaningful output
 
@@ -299,7 +299,7 @@ unsigned char spi_write_read(unsigned char spi_data)
  180:	7c 01       	movw	r14, r24
 		//Control = 5.0;
 
-		if(fabs(Control) >= Max_Voltage)				// Check Maximum voltage
+		if(fabs(Control) >= Max_Voltage)				// Check Maximum voltage, fabs is basically absolute value
  182:	9f 77       	andi	r25, 0x7F	; 127
  184:	20 e0       	ldi	r18, 0x00	; 0
  186:	30 e0       	ldi	r19, 0x00	; 0
@@ -324,7 +324,7 @@ __ATTR_CONST__ static inline double copysign (double __x, double __y)
  1a0:	57 f9       	bld	r21, 7
  1a2:	69 01       	movw	r12, r18
  1a4:	7a 01       	movw	r14, r20
-		Control = copysign(Max_Voltage,Control);
+		Control = copysign(Max_Voltage,Control);		// copysign copies returns a value with mag of first val and sign of second val
 
 		Control_HB = (float) (Control/12.0*1600.0);   // Convert the Control voltage to a H-Bridge output value between o and 1600
  1a6:	20 e0       	ldi	r18, 0x00	; 0
