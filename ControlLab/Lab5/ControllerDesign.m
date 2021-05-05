@@ -14,6 +14,9 @@ figure
 t_step = data(:,1);
 V_in_step = data(:,2);
 V_out_step = data(:,3);
+%plot raw
+plot(t_step, V_in_step, t_step, V_out_step)
+figure
 %shift and scale the data
 pos_idx = find(t_step > 0 & t_step < 0.08);
 t_step = t_step(pos_idx);
@@ -24,12 +27,8 @@ V_out_step = V_out_step - min(V_out_step);
 plot(t_step, V_out_step)
 
 %% Root locus design
-zeta = 2.5;
-omegan = 2*pi*55;
-gain = 2;
-
-num = 2.388e5;
-den = [1 1728 1.194E5];
+num = 2.388E5;
+den = [0.002 3.765 1621 1.194E5];
 figure
 rlocus(num, den)
 Gp = tf(num, den);
@@ -49,7 +48,7 @@ V_in_step_ol = A(:,2);
 V_out_step_ol = A(:,3);
 
 %normalize the response from oscope
-t_step_ol = t_step_ol + 0.4981;
+t_step_ol = t_step_ol + 0.5;
 V_out_step_ol = V_out_step_ol + 3.67;
 V_in_step_ol = V_in_step_ol + 2;
 
@@ -75,18 +74,18 @@ omegan_d = (1-0.4167*z_d+2.917*z_d^2)/t_rise;
 s1 = -z_d*omegan_d+sqrt(1-z_d^2)*omegan_d*j
 s2 = -z_d*omegan_d-sqrt(1-z_d^2)*omegan_d*j
 %plot the desired roots
-hold on
-plot(-z_d*omegan_d, sqrt(1-z_d^2)*omegan_d, 'd')
-plot(-z_d*omegan_d, -sqrt(1-z_d^2)*omegan_d, 'd')
-hold off
+% hold on
+% plot(-z_d*omegan_d, sqrt(1-z_d^2)*omegan_d, 'd')
+% plot(-z_d*omegan_d, -sqrt(1-z_d^2)*omegan_d, 'd')
+% hold off
 % K = abs(s2^2+1728*s2+1.194e5)/abs(2.388e5)
-K=0.2;
-
+K = 0.2;
 num = K*2.388E5;
-den = [1 1728 1.194E5+K*2.388E5];
+den = [0.002 3.765 1621 1.194E5+K*2.388E5];
 sys = tf(num, den);
 hold on
 step(sys);
+legend('OLRP', 'CLRP')
 
 %% plot the raw response and the theoretical response
 t_step_mod = linspace(0, max(t_step), length(V_out_step));
@@ -102,7 +101,14 @@ plot(t_step, V_out_step, 'o')
 hold on 
 plot(t_step_mod, step_data)
 plot(t_step_ol, V_out_step_ol, 'o')
+plot(t_step_ol, V_in_step_ol, 'o')
 plot(t_step_mod_ol, ol_response)
-legend('OL resp data', 'OL resp theoretical', 'CL resp data', 'CL resp theoretical')
+plot(t_step, V_in_step, 'o')
+legend('CL resp data',...
+    'OL resp theoretical',...
+    'OL resp data',...
+    'OL input',...
+    'OL resp theoretical',...
+    'Input signal')
 xlabel('Time (s)')
 ylabel('Voltage (V)')

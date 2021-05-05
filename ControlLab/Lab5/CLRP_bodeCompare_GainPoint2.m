@@ -15,11 +15,11 @@ phase_exp = raw_data(:,3);
 %% derived bode model
 K = 0.2;
 num = K*2.388E5;
-den = [1 1728 1.194E5+K*2.388E5];
+den = [0.002 3.765 1621 1.194E5+K*2.388E5];
 sys = tf(num, den);
 Gp = sys;
 w = logspace(-1, 3);
-[mag_t, phase_t] = bode(sys, w);
+[mag_t, phase_t] = bode(Gp, w);
 mag_t = squeeze(mag_t);
 phase_t = squeeze(phase_t);
 f = w/(2*pi);

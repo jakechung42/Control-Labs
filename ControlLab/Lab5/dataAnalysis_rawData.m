@@ -21,16 +21,20 @@ semilogx(f_data, phase_data, 'o')
 grid on
 
 %% Find the transfer function that fit the experimental data
-Ktotal = 2
-freqn = 55
+Ktotal = 2;
+freqn = 55;
 omegan = 2*pi*freqn;
-zeta = 2.5
+zeta = 2.0;
 
+%second pole
+s = tf('s');
+Gc = 1/(1+0.002*s);
 %define the system
 num = Ktotal*omegan^2;
 den = [1 2*zeta*omegan omegan^2];
 
-sys = tf(num, den)
+sys = tf(num, den);
+sys = sys*Gc
 w = logspace(-1, 3);
 [mag_t, phase_t] = bode(sys, w);
 mag_t = squeeze(mag_t);
@@ -89,7 +93,7 @@ V_in_step = A(:,2);
 V_out_step = A(:,3);
 
 %normalize the response from oscope
-t_step = t_step + 0.4981;
+t_step = t_step + 0.4987;
 V_out_step = V_out_step + 3.67;
 V_in_step = V_in_step + 2;
 
@@ -110,7 +114,7 @@ t_step_mod = linspace(0, 0.2, length(t_step));
 %theoretical response of the system model fit
 [model_response] = lsim(model, V_in_step, t_step_mod);
 
-%plot raw data
+% %plot raw data
 figure
 plot(t_step,V_out_step, '.', t_step, model_response)
 legend('Experimental response', 'Fitted model response')
@@ -125,3 +129,33 @@ plot(t_step, model_response, 'LineWidth', 2)
 legend('Experimental response', 'Params Motor response', 'Fitted model response')
 ylabel('Voltage (V)')
 xlabel('Time (s)')
+
+%% redo the bode to find a transfer function that fits better
+% freqn = 55;
+% omegan = 2*pi*freqn;
+% zeta = 2.0;
+% 
+% define the system
+% num = Ktotal*omegan^2;
+% den = [1 2*zeta*omegan omegan^2];
+% 
+% sys = tf(num, den)
+% s = tf('s');
+% Gc = 1/(1+0.002*s);
+% figure
+% bode(Gc)
+% sys1 = sys*Gc
+% [mag_t, phase_t] = bode(sys1, w);
+% 
+% mag_t = squeeze(mag_t);
+% phase_t = squeeze(phase_t);
+% 
+% figure
+% subplot(2, 1, 1)
+% semilogx(w_data, 20*log10(mag_data), 'o')
+% hold on
+% semilogx(w, 20*log10(mag_t))
+% subplot(2, 1, 2)
+% semilogx(w_data, phase_data, 'o')
+% hold on
+% semilogx(w, phase_t)
