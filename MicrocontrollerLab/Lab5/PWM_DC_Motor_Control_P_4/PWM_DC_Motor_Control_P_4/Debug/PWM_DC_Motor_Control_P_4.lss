@@ -157,8 +157,8 @@ unsigned char spi_write_read(unsigned char spi_data)
 	DDRD=0b10000010; //Set Output Ports for the Chip select and USART
   b8:	82 e8       	ldi	r24, 0x82	; 130
   ba:	8a b9       	out	0x0a, r24	; 10
-	DDRC=0b00100011; //Set Output Ports for the LED and H-Bridge direction
-  bc:	83 e2       	ldi	r24, 0x23	; 35
+	DDRC=0b00101100; //Set Output Ports for the LED and H-Bridge direction
+  bc:	8c e2       	ldi	r24, 0x2C	; 44
   be:	87 b9       	out	0x07, r24	; 7
 	//Fast PWM
 	//ICR1=1600 defines 10,000Hz PWM (clock frequency/prescaler)/(target frequency)
@@ -222,11 +222,11 @@ unsigned char spi_write_read(unsigned char spi_data)
 		
 		// Note if you have print statments active this will slow the control loop dramatically
 		
-		Vel_Set_v += .01;
- 106:	2a e0       	ldi	r18, 0x0A	; 10
- 108:	37 ed       	ldi	r19, 0xD7	; 215
- 10a:	43 e2       	ldi	r20, 0x23	; 35
- 10c:	5c e3       	ldi	r21, 0x3C	; 60
+		Vel_Set_v += .001;
+ 106:	2f e6       	ldi	r18, 0x6F	; 111
+ 108:	32 e1       	ldi	r19, 0x12	; 18
+ 10a:	43 e8       	ldi	r20, 0x83	; 131
+ 10c:	5a e3       	ldi	r21, 0x3A	; 58
  10e:	c5 01       	movw	r24, r10
  110:	b4 01       	movw	r22, r8
  112:	a0 d0       	rcall	.+320    	; 0x254 <__addsf3>
@@ -352,13 +352,13 @@ __ATTR_CONST__ static inline double copysign (double __x, double __y)
  1ca:	88 23       	and	r24, r24
  1cc:	1c f5       	brge	.+70     	; 0x214 <__EEPROM_REGION_LENGTH__+0x14>
 		{
-			cbi(PORTC, 0);  //Set Direction pins  (01)
+			cbi(PORTC, 2);  //Set Direction pins  (01)
  1ce:	88 b1       	in	r24, 0x08	; 8
- 1d0:	8e 7f       	andi	r24, 0xFE	; 254
+ 1d0:	8b 7f       	andi	r24, 0xFB	; 251
  1d2:	88 b9       	out	0x08, r24	; 8
-			sbi(PORTC, 1);
+			sbi(PORTC, 3);
  1d4:	88 b1       	in	r24, 0x08	; 8
- 1d6:	82 60       	ori	r24, 0x02	; 2
+ 1d6:	88 60       	ori	r24, 0x08	; 8
  1d8:	88 b9       	out	0x08, r24	; 8
 			Control_HB = -Control_HB;
  1da:	f7 fa       	bst	r15, 7
@@ -397,13 +397,13 @@ __ATTR_CONST__ static inline double copysign (double __x, double __y)
 		}
 		else
 		{
-			sbi(PORTC, 0);  //Set Direction pins  (10)
+			sbi(PORTC, 2);  //Set Direction pins  (10)
  214:	88 b1       	in	r24, 0x08	; 8
- 216:	81 60       	ori	r24, 0x01	; 1
+ 216:	84 60       	ori	r24, 0x04	; 4
  218:	88 b9       	out	0x08, r24	; 8
-			cbi(PORTC, 1);
+			cbi(PORTC, 3);
  21a:	88 b1       	in	r24, 0x08	; 8
- 21c:	8d 7f       	andi	r24, 0xFD	; 253
+ 21c:	87 7f       	andi	r24, 0xF7	; 247
  21e:	88 b9       	out	0x08, r24	; 8
 			if(Control_HB >= 1600.)
  220:	20 e0       	ldi	r18, 0x00	; 0

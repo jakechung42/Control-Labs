@@ -53,7 +53,7 @@ int main (void)
 
 	DDRB=0b00101110; //Set Output Ports for the SPI Interface and PWM
 	DDRD=0b10000010; //Set Output Ports for the Chip select and USART
-	DDRC=0b00100011; //Set Output Ports for the LED and H-Bridge direction
+	DDRC=0b00101100; //Set Output Ports for the LED and H-Bridge direction
 
 	// PWM Initialization
 	//Fast PWM
@@ -85,7 +85,7 @@ int main (void)
 		
 		// Note if you have print statments active this will slow the control loop dramatically
 		
-		Vel_Set_v += .01;
+		Vel_Set_v += .001;
 		if(Vel_Set_v >= 3.0) Vel_Set_v = -3.0;
 
 
@@ -122,8 +122,8 @@ int main (void)
 
 		if(Control_HB < 0)
 		{
-			cbi(PORTC, 0);  //Set Direction pins  (01)
-			sbi(PORTC, 1);
+			cbi(PORTC, 2);  //Set Direction pins  (01)
+			sbi(PORTC, 3);
 			Control_HB = -Control_HB;
 
 			if(Control_HB >= 1600.)
@@ -134,8 +134,8 @@ int main (void)
 		}
 		else
 		{
-			sbi(PORTC, 0);  //Set Direction pins  (10)
-			cbi(PORTC, 1);
+			sbi(PORTC, 2);  //Set Direction pins  (10)
+			cbi(PORTC, 3);
 			if(Control_HB >= 1600.)
 			{
 				Control_HB   = 1600.;
