@@ -84,15 +84,14 @@ int main (void)
 
 	while(1)
 	{
-		// waiting for interrupt to run
+		Vel_Set_v += .005;									// The motor velocity voltage is cycled from -3 volts to +3 volts
+		if(Vel_Set_v >= 3.0) Vel_Set_v = -3.0;
 	}
 }
 
 ISR(TIMER1_COMPA_vect)
 {
-	Vel_Set_v += .005;									// The motor velocity voltage is cycled from -3 volts to +3 volts
-	if(Vel_Set_v >= 3.0) Vel_Set_v = -3.0;
-
+	// Begin sampling for control system
 	ADCSRA = ADCSRA | 0b01000000;  					// Start AD conversion
 	while ((ADCSRA & 0b01000000) == 0b01000000); 	// Wait while AD conversion is executed
 
