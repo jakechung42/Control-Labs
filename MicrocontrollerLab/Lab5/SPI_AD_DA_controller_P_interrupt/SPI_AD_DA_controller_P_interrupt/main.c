@@ -43,9 +43,11 @@ unsigned char spi_write_read(unsigned char spi_data)
 
 int main (void)
 {
+	float	Sawtooth, StepInput, Sawtooth_Amplitude, Step_Amplitude, Input_Increment;
+
 	Vel_Set_v = -3.0;
 
-	Max_Voltage = 5.0;
+	Max_Voltage = 6.0;
 	Kp          = 1.0; 	// Proportional control constant
 	// The motor velocity voltage is cycled from -3 volts to +3 volts
 	// The incriment needs to be very small so the velocity change is obsevable
@@ -53,13 +55,13 @@ int main (void)
 	// Note if you have print statments active this will slow the control loop dramatically
 
 	//USART Setup
-	UBRR0H = MYUBRR >> 8;
+	UBRR0H = (MYUBRR >> 8);
 	UBRR0L = MYUBRR;
 	UCSR0B = (1<<RXEN0)|(1<<TXEN0);
 	stdout = &mystdout; //Required for printf init
 
 	// AD initialization
-	ADMUX  = 0b00000000; //Input on AD Channel 0
+	ADMUX  = 0b00000010; //Input on ADC2
 	ADCSRA = 0b10000111; // ADC on, /128 for a 16 MHz clock, interrupt off
 
 	DDRB=0b00101100; //Set Output Ports for the SPI Interface
@@ -71,19 +73,38 @@ int main (void)
 
 	//Interrupt counter set up
 	// Configure timer 1 for CTC mode, clk/8
-	TCCR1B |= (0<<ICNC1)|(0<<ICES1)|(0<<WGM13)|(1<<WGM12)|(0<<CS12)|(0<<CS11)|(1<<CS10); 
+	TCCR1B |= (0<<ICNC1)|(0<<ICES1)|(0<<WGM13)|(1<<WGM12)|(0<<CS12)|(1<<CS11)|(0<<CS10); 
 	TIMSK1 |= (1 << OCIE1A); // Enable CTC interrupt
 	
 	sei(); // Enable global interrupt
 
 	// OCR1A = Target_Timer_Count = (Clock_Frequency / (Prescale * Target_Frequency)) - 1
 
-	OCR1A = 3999;   //Set CTC compare value to 1kHz at 16MHz AVR clock, with a prescaler of 8
+	OCR1A = 3999;   //Set CTC compare value to 200Hz at 16MHz AVR clock, with a prescaler of 8
+
+	Sawtooth           = -1.0;			// Initial value
+	Sawtooth_Amplitude = 5.0;			// 5 volts maximum
+	Step_Amplitude     = 5.0;			// 5 volts maximum
+	Input_Increment    = 0.02;		    // This variable is used to specify the desired frequency
+
+	// Frequency = Input_Increment*SampleFrequency/2
+	// SampleFrequency = 1/SampleTime
+	// SampleTime is the physical time for one cycle
 
 	while(1)
 	{
-		Vel_Set_v += .0005;									// The motor velocity voltage is cycled from -3 volts to +3 volts
-		if(Vel_Set_v >= 3.0) Vel_Set_v = -3.0;
+		// Digitally generated Input wave form
+		Sawtooth += Input_Increment;						// Input_Increment
+		if(Sawtooth >= 1.0) Sawtooth = -1.0;                // Sawtooth Input Value (-1 to 1)
+		if(Sawtooth <= 0.0) StepInput = 0.0;                  // Step Input Value     (0 to 1)
+		if(Sawtooth > 0.0)  StepInput = 1.0;                  // Step Input Value		(0 to 1)
+				
+		//Vel_Set_v = Sawtooth*Sawtooth_Amplitude;            	// Set Velocity Set Point to either Sawtooth or Step Input Value
+		Vel_Set_v = StepInput * Step_Amplitude;					// Set Velocity Set Point to either Sawtooth or Step Input Value
+																	// Note the Velocity Set Point is in Control Voltage Units (+- 10 volts)
+		// Vel_Set_v += 0.0005;
+		// if(Vel_Set_v >= 3.0) Vel_Set_v = -3.0;
+		//printf("Print value: %d\n", StepInput);
 	}
 }
 

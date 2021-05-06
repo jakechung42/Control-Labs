@@ -82,7 +82,7 @@ int main (void)
 	Sawtooth           = -1.0;			// Initial value
 	Sawtooth_Amplitude = 5.0;			// 5 volts maximum
 	Step_Amplitude     = 5.0;			// 5 volts maximum
-	Input_Increment    = .01;		    // This variable is used to specify the desired frequency
+	Input_Increment    = .001;		    // This variable is used to specify the desired frequency
 	
 	// Frequency = Input_Increment*SampleFrequency/2
 	// SampleFrequency = 1/SampleTime
@@ -92,17 +92,16 @@ int main (void)
 	
 	while(1)
 	{
-	// Digitally generated Input wave form
+		// Digitally generated Input wave form
 		Sawtooth += Input_Increment;						// Input_Increment
 		if(Sawtooth >= 1.0) Sawtooth = -1.0;                // Sawtooth Input Value (-1 to 1)
 		if(Sawtooth <= 0.0) StepInput = 0;                  // Step Input Value     (0 to 1)
 		if(Sawtooth > 0.0)  StepInput = 1;                  // Step Input Value		(0 to 1)
 				
-		//		Vel_Set_v = Sawtooth*Sawtooth_Amplitude;            // Set Velocity Set Point to either Sawtooth or Step Input Value
+		// Vel_Set_v = Sawtooth*Sawtooth_Amplitude;            // Set Velocity Set Point to either Sawtooth or Step Input Value
 		Vel_Set_v = StepInput*Step_Amplitude;						// Set Velocity Set Point to either Sawtooth or Step Input Value
 																	// Note the Velocity Set Point is in Control Voltage Units (+- 10 volts)
 		
-
 		ADCSRA = ADCSRA | 0b01000000;  						// Start AD conversion
 		while ((ADCSRA & 0b01000000) == 0b01000000); 		// Wait while AD conversion is executed
 
