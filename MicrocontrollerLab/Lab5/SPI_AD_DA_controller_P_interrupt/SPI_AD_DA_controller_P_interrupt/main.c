@@ -70,21 +70,19 @@ int main (void)
 	SPSR=0b00000000;
 
 	//Interrupt counter set up
-	TCCR1B |= (1 << WGM12); // Configure timer 1 for CTC mode
+	// Configure timer 1 for CTC mode, clk/8
+	TCCR1B |= (0<<ICNC1)|(0<<ICES1)|(0<<WGM13)|(1<<WGM12)|(0<<CS12)|(0<<CS11)|(1<<CS10); 
 	TIMSK1 |= (1 << OCIE1A); // Enable CTC interrupt
 	
 	sei(); // Enable global interrupt
 
 	// OCR1A = Target_Timer_Count = (Clock_Frequency / (Prescale * Target_Frequency)) - 1
 
-	OCR1A = 15999;   //Set CTC compare value to 1kHz at 16MHz AVR clock, with a prescaler of 1
-
-	//Prescaler Fcpu/1 to get 1kHz 
-	TCCR1B = TCCR1B | (1 << CS10);
+	OCR1A = 3999;   //Set CTC compare value to 1kHz at 16MHz AVR clock, with a prescaler of 8
 
 	while(1)
 	{
-		Vel_Set_v += .005;									// The motor velocity voltage is cycled from -3 volts to +3 volts
+		Vel_Set_v += .0005;									// The motor velocity voltage is cycled from -3 volts to +3 volts
 		if(Vel_Set_v >= 3.0) Vel_Set_v = -3.0;
 	}
 }
