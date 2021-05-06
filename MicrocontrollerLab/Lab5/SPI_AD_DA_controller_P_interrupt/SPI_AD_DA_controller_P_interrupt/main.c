@@ -84,7 +84,7 @@ int main (void)
 
 	while(1)
 	{
-
+		// waiting for interrupt to run
 	}
 }
 
@@ -98,7 +98,7 @@ ISR(TIMER1_COMPA_vect)
 
 	adc_input = ADCW; 									// Read AD value
 	adc_input_v = (float) adc_input*(20./1024.)- 10.0;	// Convert the adc_input digital value (0 to 1024) to a voltage
-	// Note the input is bipolar +- 5 volts
+	// Note the input is bipolar +- 10 volts
 	// Note that the (10./1024.) term needs the decimal point
 	// or else it is interrupted as an integer and the result is zero
 	// Control Equation
