@@ -1,3 +1,9 @@
+/*
+ *
+ * Mega88_Test_AD_DA_Step_Input_P.c
+ *
+ */ 
+
 // Velocity Control Example Proportional Control
 
 #include <stdio.h>
@@ -40,7 +46,8 @@ int main (void)
 	float	Control, Max_Voltage, Kp;
 	float	adc_input_v;
 	float	Error;
-
+	float	Sawtooth, StepInput,Sawtooth_Amplitude, Step_Amplitude, Input_Increment, DAC_output;
+	
 	//USART Setup
 	UBRR0H = MYUBRR >> 8;
 	UBRR0L = MYUBRR;
@@ -49,7 +56,7 @@ int main (void)
 
 
 	// AD initialization
-	ADMUX  = 0b00000000; //Input on AD Channel 0
+	ADMUX  = 0b00000010; //Input on AD Channel 0
 	ADCSRA = 0b10000111; // ADC on, /128 for a 16 MHz clock, interrupt off
 
 	DDRB=0b00101100; //Set Output Ports for the SPI Interface
@@ -61,40 +68,63 @@ int main (void)
 
 	Vel_Set_v = -3.0;
 
-	Max_Voltage = 5.0;
+	Max_Voltage = 6.0;
 	Kp          = 1.0; 	// Proportional control constant
 
-	// The motor velocity voltage is cycled from -3 volts to +3 volts
-	// The incriment needs to be very small so the velocity change is obsevable
+	// Digitally generated Input wave form
 	
-	// Note if you have print statments active this will slow the control loop dramatically
+	// The Input_Increment value is increased to decrease the period of the resulting sawtooth or step input value
+	
+	// Note if you have print statements active this will slow the control loop dramatically
+	
+	// Sawtooth and Step Input are in Control Voltage Units (+- 10 volts)
+	
+	Sawtooth           = -1.0;			// Initial value
+	Sawtooth_Amplitude = 5.0;			// 5 volts maximum
+	Step_Amplitude     = 5.0;			// 5 volts maximum
+	Input_Increment    = .01;		    // This variable is used to specify the desired frequency
+	
+	// Frequency = Input_Increment*SampleFrequency/2
+	// SampleFrequency = 1/SampleTime
+	// SampleTime is the physical time for one cycle
+	// Note when you add additional code to the control loop the SampleTime will change and the values above will change
+	
 	
 	while(1)
 	{
-		Vel_Set_v += .0005;									// The motor velocity voltage is cycled from -3 volts to +3 volts
-		if(Vel_Set_v >= 3.0) Vel_Set_v = -3.0;
+	// Digitally generated Input wave form
+		Sawtooth += Input_Increment;						// Input_Increment
+		if(Sawtooth >= 1.0) Sawtooth = -1.0;                // Sawtooth Input Value (-1 to 1)
+		if(Sawtooth <= 0.0) StepInput = 0;                  // Step Input Value     (0 to 1)
+		if(Sawtooth > 0.0)  StepInput = 1;                  // Step Input Value		(0 to 1)
+				
+		//		Vel_Set_v = Sawtooth*Sawtooth_Amplitude;            // Set Velocity Set Point to either Sawtooth or Step Input Value
+		Vel_Set_v = StepInput*Step_Amplitude;						// Set Velocity Set Point to either Sawtooth or Step Input Value
+																	// Note the Velocity Set Point is in Control Voltage Units (+- 10 volts)
+		
 
-
-		ADCSRA = ADCSRA | 0b01000000;  					// Start AD conversion
-		while ((ADCSRA & 0b01000000) == 0b01000000); 	// Wait while AD conversion is executed
+		ADCSRA = ADCSRA | 0b01000000;  						// Start AD conversion
+		while ((ADCSRA & 0b01000000) == 0b01000000); 		// Wait while AD conversion is executed
 
 		adc_input = ADCW; 									// Read AD value
-		adc_input_v = (float) adc_input*(10./1024.)- 5.0;	// Convert the adc_input digital value (0 to 1024) to a voltage
-		// Note the input is bipolar +- 5 volts
-		// Note that the (10./1024.) term needs the decimal point
-		// or else it is interrupted as an integer and the result is zero
-		// Control Equation
+		adc_input_v = (float) adc_input*(20./1024.)- 10.0;	// Convert the adc_input digital value (0 to 1024) to a voltage
+															// Note the input is bipolar +- 10 volts
+															// Note that the (20./1024.) term needs the decimal point
+															// or else it is interrupted as an integer and the result is zero
 
-		Error   = (Vel_Set_v - adc_input_v);			// Error (units are voltage +- 5 volts)
-		Control = Kp * Error;  						    // Control (units are voltage  +- 5 volts)
+		// Control Equation
+		Error   = (Vel_Set_v - adc_input_v);			// Error (units are voltage +- 10 volts)
+		Control = Kp * Error;  						    // Control (units are voltage  +- 10 volts)
 
 		if(fabs(Control) >= Max_Voltage)				// Check Maximum voltage
 		Control = copysign(Max_Voltage,Control);
 
-		adc_output = floor((Control + 5.)*4096./10.);  			// Convert control voltage to a digital number for output
-		// Note the output is +- 5 Volts  which corresponds to 0 to 4095
+		adc_output = floor((Control + 10.)*4096./20.);  			// Convert control voltage to a digital number for output
+																	// Note the output is +- 10 Volts  which corresponds to 0 to 4095
 		
-		// printf("Error, vel_Set_v, adc_input, adc_output %d    %d    %d    %d\n", (int) Error,(int) Vel_Set_v,adc_input,adc_output );
+		//printf("Error, vel_Set_v, adc_input, adc_output %d    %d    %d    %d\n", (int) Error,(int) Vel_Set_v,adc_input,adc_output );
+		
+		// adc_output = floor((Vel_Set_v + 10.)*4096./20.);			// Uncomment this line to temporarily check the input function by outputting it to the DAC
 		
 		// Output adc_output to DAC
 		spi_data_0 = 0x00; 								// Zero spi_data_0
