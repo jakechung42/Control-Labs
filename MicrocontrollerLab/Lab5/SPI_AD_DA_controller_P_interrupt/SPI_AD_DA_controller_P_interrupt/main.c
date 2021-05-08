@@ -28,10 +28,11 @@ unsigned char spi_data_0, spi_data_1, dummy_read;
 unsigned int adc_output, adc_input;
 
 //Set up Control variables
-float	Vel_Set_v;
+volatile float 	Vel_Set_v;
 float	Control, Max_Voltage, Kp;
 float	adc_input_v;
 float	Error;
+float	Sawtooth, StepInput, Sawtooth_Amplitude, Step_Amplitude, Input_Increment;
 
 // SPI write read function
 unsigned char spi_write_read(unsigned char spi_data)
@@ -43,8 +44,6 @@ unsigned char spi_write_read(unsigned char spi_data)
 
 int main (void)
 {
-	float	Sawtooth, StepInput, Sawtooth_Amplitude, Step_Amplitude, Input_Increment;
-
 	Vel_Set_v = -3.0;
 
 	Max_Voltage = 6.0;
@@ -80,12 +79,12 @@ int main (void)
 
 	// OCR1A = Target_Timer_Count = (Clock_Frequency / (Prescale * Target_Frequency)) - 1
 
-	OCR1A = 3999;   //Set CTC compare value to 200Hz at 16MHz AVR clock, with a prescaler of 8
+	OCR1A = 1999;   //Set CTC compare value to 1k Hz at 16MHz AVR clock, with a prescaler of 8
 
 	Sawtooth           = -1.0;			// Initial value
-	Sawtooth_Amplitude = 5.0;			// 5 volts maximum
-	Step_Amplitude     = 5.0;			// 5 volts maximum
-	Input_Increment    = 0.02;		    // This variable is used to specify the desired frequency
+	// Sawtooth_Amplitude = 1.0;			// 5 volts maximum
+	Step_Amplitude     = 2.0;			// 5 volts maximum
+	Input_Increment    = 0.005;		    // This variable is used to specify the desired frequency
 
 	// Frequency = Input_Increment*SampleFrequency/2
 	// SampleFrequency = 1/SampleTime
@@ -93,29 +92,31 @@ int main (void)
 
 	while(1)
 	{
-		// Digitally generated Input wave form
-		Sawtooth += Input_Increment;						// Input_Increment
-		if(Sawtooth >= 1.0) Sawtooth = -1.0;                // Sawtooth Input Value (-1 to 1)
-		if(Sawtooth <= 0.0) StepInput = 0.0;                  // Step Input Value     (0 to 1)
-		if(Sawtooth > 0.0)  StepInput = 1.0;                  // Step Input Value		(0 to 1)
-				
-		//Vel_Set_v = Sawtooth*Sawtooth_Amplitude;            	// Set Velocity Set Point to either Sawtooth or Step Input Value
-		Vel_Set_v = StepInput * Step_Amplitude;					// Set Velocity Set Point to either Sawtooth or Step Input Value
-																	// Note the Velocity Set Point is in Control Voltage Units (+- 10 volts)
-		// Vel_Set_v += 0.0005;
-		// if(Vel_Set_v >= 3.0) Vel_Set_v = -3.0;
-		//printf("Print value: %d\n", StepInput);
+		// wait for interrupt
 	}
 }
 
 ISR(TIMER1_COMPA_vect)
 {
+	// Digitally generated Input wave form
+	Sawtooth += Input_Increment;						// Input_Increment
+	if(Sawtooth >= 1.0) Sawtooth = -1.0;                // Sawtooth Input Value (-1 to 1)
+	if(Sawtooth <= 0.0) StepInput = -1.0;                  // Step Input Value     (0 to 1)
+	if(Sawtooth > 0.0)  StepInput = 1.0;                  // Step Input Value		(0 to 1)
+				
+	//Vel_Set_v = Sawtooth*Sawtooth_Amplitude;            	// Set Velocity Set Point to either Sawtooth or Step Input Value
+	Vel_Set_v = StepInput * Step_Amplitude;					// Set Velocity Set Point to either Sawtooth or Step Input Value
+																	// Note the Velocity Set Point is in Control Voltage Units (+- 10 volts)
+	// Vel_Set_v += 0.0005;
+	// if(Vel_Set_v >= 3.0) Vel_Set_v = -3.0;
+	// printf("Print value: %d\n", Vel_Set_v*1000);
 	// Begin sampling for control system
 	ADCSRA = ADCSRA | 0b01000000;  					// Start AD conversion
 	while ((ADCSRA & 0b01000000) == 0b01000000); 	// Wait while AD conversion is executed
 
 	adc_input = ADCW; 									// Read AD value
-	adc_input_v = (float) adc_input*(20./1024.)- 10.0;	// Convert the adc_input digital value (0 to 1024) to a voltage
+	adc_input_v = (float) adc_input*(16./1024.)- 8.0;	// Convert the adc_input digital value (0 to 1024) to a voltage
+														// adc input is the voltage input from the tachometer
 	// Note the input is bipolar +- 10 volts
 	// Note that the (10./1024.) term needs the decimal point
 	// or else it is interrupted as an integer and the result is zero
@@ -124,10 +125,12 @@ ISR(TIMER1_COMPA_vect)
 	Error   = (Vel_Set_v - adc_input_v);			// Error (units are voltage +- 5 volts)
 	Control = Kp * Error;  						    // Control (units are voltage  +- 5 volts)
 
+	// printf("Print set vel voltage: %d\n", Vel_Set_v*1000);  // Remember to comment out!
+
 	if(fabs(Control) >= Max_Voltage)				// Check Maximum voltage
 	Control = copysign(Max_Voltage,Control);
 
-	adc_output = floor((Control + 10.)*4096./20.);  			// Convert control voltage to a digital number for output
+	adc_output = floor(Control*4096./8.+2048.0);  			// Convert control voltage to a digital number for output
 	// Note the output is +- 5 Volts  which corresponds to 0 to 4095
 		
 	// printf("Error, vel_Set_v, adc_input, adc_output %d    %d    %d    %d\n", (int) Error,(int) Vel_Set_v,adc_input,adc_output );
