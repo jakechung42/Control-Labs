@@ -25,7 +25,7 @@ step(sysD_cl)
 grid on
 
 %% comparing the theoretical response with the model response controller gain 1
-path = "D:\Github\Control-Labs\MicrocontrollerLab\Lab5\CSV_20215961241.csv";
+path = "D:\Github\Control-Labs\MicrocontrollerLab\Lab5\CSV_step_response_1.csv";
 data = csvread(path, 2, 0);
 raw_t_step = data(:,1);
 raw_tach_step = data(:,2);
@@ -53,10 +53,11 @@ legend('Tachometer', 'Control signal')
 
 %% plot the theoretical response and the raw data for step response
 %scale and adjust the raw data to show only step response
-temp = raw_t_step - 0.184; %need to shift the data 
+temp = raw_t_step - 0.1975; %need to shift the data 
 idx = find(temp>0);
 t_scaled = temp(idx);
 tach_scaled = raw_tach_step(idx);
+tach_scaled = tach_scaled/5; %normalize to the theoretical response
 [y, t] = step(sysD_cl);
 figure
 plot(t_scaled, tach_scaled, '-o')

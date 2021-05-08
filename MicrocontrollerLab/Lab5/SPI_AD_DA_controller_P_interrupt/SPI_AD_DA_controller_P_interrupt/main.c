@@ -79,10 +79,10 @@ int main (void)
 
 	// OCR1A = Target_Timer_Count = (Clock_Frequency / (Prescale * Target_Frequency)) - 1
 
-	OCR1A = 999;   //Set CTC compare value to 1k Hz at 16MHz AVR clock, with a prescaler of 8
+	OCR1A = 1999;   //Set CTC compare value to 1k Hz at 16MHz AVR clock, with a prescaler of 8
 
 	Sawtooth           = -1.0;			// Initial value
-	Sawtooth_Amplitude = 1.0;			// 5 volts maximum
+	// Sawtooth_Amplitude = 1.0;			// 5 volts maximum
 	Step_Amplitude     = 5.0;			// 5 volts maximum
 	Input_Increment    = 0.005;		    // This variable is used to specify the desired frequency
 
@@ -131,7 +131,7 @@ ISR(TIMER1_COMPA_vect)
 	if(fabs(Control) >= Max_Voltage)				// Check Maximum voltage
 	Control = copysign(Max_Voltage,Control);
 
-	adc_output = floor(Control*4096./10.+2048.0);  			// Convert control voltage to a digital number for output
+	adc_output = floor((Control + 10.)*4096./20.);  			// Convert control voltage to a digital number for output
 	// Note the output is +- 5 Volts  which corresponds to 0 to 4095
 		
 	// printf("Error, vel_Set_v, adc_input, adc_output %d    %d    %d    %d\n", (int) Error,(int) Vel_Set_v,adc_input,adc_output );
