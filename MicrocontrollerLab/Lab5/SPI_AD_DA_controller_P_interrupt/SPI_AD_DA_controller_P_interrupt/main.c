@@ -79,11 +79,11 @@ int main (void)
 
 	// OCR1A = Target_Timer_Count = (Clock_Frequency / (Prescale * Target_Frequency)) - 1
 
-	OCR1A = 1999;   //Set CTC compare value to 1k Hz at 16MHz AVR clock, with a prescaler of 8
+	OCR1A = 999;   //Set CTC compare value to 1k Hz at 16MHz AVR clock, with a prescaler of 8
 
 	Sawtooth           = -1.0;			// Initial value
-	// Sawtooth_Amplitude = 1.0;			// 5 volts maximum
-	Step_Amplitude     = 2.0;			// 5 volts maximum
+	Sawtooth_Amplitude = 1.0;			// 5 volts maximum
+	Step_Amplitude     = 5.0;			// 5 volts maximum
 	Input_Increment    = 0.005;		    // This variable is used to specify the desired frequency
 
 	// Frequency = Input_Increment*SampleFrequency/2
@@ -98,24 +98,25 @@ int main (void)
 
 ISR(TIMER1_COMPA_vect)
 {
+	// Begin sampling for control system
+	ADCSRA = ADCSRA | 0b01000000;  					// Start AD conversion
+	while ((ADCSRA & 0b01000000) == 0b01000000); 	// Wait while AD conversion is executed
+
 	// Digitally generated Input wave form
 	Sawtooth += Input_Increment;						// Input_Increment
 	if(Sawtooth >= 1.0) Sawtooth = -1.0;                // Sawtooth Input Value (-1 to 1)
-	if(Sawtooth <= 0.0) StepInput = -1.0;                  // Step Input Value     (0 to 1)
+	if(Sawtooth <= 0.0) StepInput = 0.0;                  // Step Input Value     (0 to 1)
 	if(Sawtooth > 0.0)  StepInput = 1.0;                  // Step Input Value		(0 to 1)
 				
-	//Vel_Set_v = Sawtooth*Sawtooth_Amplitude;            	// Set Velocity Set Point to either Sawtooth or Step Input Value
+	// Vel_Set_v = Sawtooth*Sawtooth_Amplitude;            	// Set Velocity Set Point to either Sawtooth or Step Input Value
 	Vel_Set_v = StepInput * Step_Amplitude;					// Set Velocity Set Point to either Sawtooth or Step Input Value
 																	// Note the Velocity Set Point is in Control Voltage Units (+- 10 volts)
 	// Vel_Set_v += 0.0005;
 	// if(Vel_Set_v >= 3.0) Vel_Set_v = -3.0;
 	// printf("Print value: %d\n", Vel_Set_v*1000);
-	// Begin sampling for control system
-	ADCSRA = ADCSRA | 0b01000000;  					// Start AD conversion
-	while ((ADCSRA & 0b01000000) == 0b01000000); 	// Wait while AD conversion is executed
 
 	adc_input = ADCW; 									// Read AD value
-	adc_input_v = (float) adc_input*(16./1024.)- 8.0;	// Convert the adc_input digital value (0 to 1024) to a voltage
+	adc_input_v = (float) adc_input*(20./1024.)- 10.0;	// Convert the adc_input digital value (0 to 1024) to a voltage
 														// adc input is the voltage input from the tachometer
 	// Note the input is bipolar +- 10 volts
 	// Note that the (10./1024.) term needs the decimal point
@@ -130,7 +131,7 @@ ISR(TIMER1_COMPA_vect)
 	if(fabs(Control) >= Max_Voltage)				// Check Maximum voltage
 	Control = copysign(Max_Voltage,Control);
 
-	adc_output = floor(Control*4096./8.+2048.0);  			// Convert control voltage to a digital number for output
+	adc_output = floor(Control*4096./10.+2048.0);  			// Convert control voltage to a digital number for output
 	// Note the output is +- 5 Volts  which corresponds to 0 to 4095
 		
 	// printf("Error, vel_Set_v, adc_input, adc_output %d    %d    %d    %d\n", (int) Error,(int) Vel_Set_v,adc_input,adc_output );
