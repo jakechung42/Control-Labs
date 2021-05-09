@@ -219,7 +219,7 @@ END GROUP
 .rela.plt
  *(.rela.plt)
 
-.text           0x00000000      0x6be
+.text           0x00000000      0x6ca
  *(.vectors)
  .vectors       0x00000000      0x1fc O:/Atmel/Studio/7.0/Packs/atmel/XMEGAA_DFP/1.2.141/gcc/dev/atxmega128a1u/avrxmega7/crtatxmega128a1u.o
                 0x00000000                __vector_default
@@ -423,26 +423,26 @@ END GROUP
  .text.usart_init
                 0x00000332       0x32 main.o
                 0x00000332                usart_init
- .text.main     0x00000364       0x38 main.o
+ .text.main     0x00000364       0x44 main.o
                 0x00000364                main
  .text.avr-libc
-                0x0000039c       0x96 o:/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avrxmega7\libc.a(fdevopen.o)
-                0x0000039c                fdevopen
+                0x000003a8       0x96 o:/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avrxmega7\libc.a(fdevopen.o)
+                0x000003a8                fdevopen
  .text.avr-libc
-                0x00000432       0x38 o:/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avrxmega7\libc.a(calloc.o)
-                0x00000432                calloc
+                0x0000043e       0x38 o:/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avrxmega7\libc.a(calloc.o)
+                0x0000043e                calloc
  .text.avr-libc
-                0x0000046a      0x242 o:/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avrxmega7\libc.a(malloc.o)
-                0x0000046a                malloc
-                0x0000059a                free
+                0x00000476      0x242 o:/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avrxmega7\libc.a(malloc.o)
+                0x00000476                malloc
+                0x000005a6                free
  .text.avr-libc
-                0x000006ac        0xe o:/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avrxmega7\libc.a(memset.o)
-                0x000006ac                memset
-                0x000006ba                . = ALIGN (0x2)
+                0x000006b8        0xe o:/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avrxmega7\libc.a(memset.o)
+                0x000006b8                memset
+                0x000006c6                . = ALIGN (0x2)
  *(.fini9)
- .fini9         0x000006ba        0x0 o:/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avrxmega7\libgcc.a(_exit.o)
-                0x000006ba                _exit
-                0x000006ba                exit
+ .fini9         0x000006c6        0x0 o:/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avrxmega7\libgcc.a(_exit.o)
+                0x000006c6                _exit
+                0x000006c6                exit
  *(.fini9)
  *(.fini8)
  *(.fini8)
@@ -461,11 +461,11 @@ END GROUP
  *(.fini1)
  *(.fini1)
  *(.fini0)
- .fini0         0x000006ba        0x4 o:/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avrxmega7\libgcc.a(_exit.o)
+ .fini0         0x000006c6        0x4 o:/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avrxmega7\libgcc.a(_exit.o)
  *(.fini0)
-                0x000006be                _etext = .
+                0x000006ca                _etext = .
 
-.data           0x00802000        0x6 load address 0x000006be
+.data           0x00802000        0x6 load address 0x000006ca
                 0x00802000                PROVIDE (__data_start, .)
  *(.data)
  .data          0x00802000        0x6 o:/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avrxmega7\libc.a(malloc.o)
@@ -492,8 +492,8 @@ END GROUP
                 0x0080200c                __brkval
                 0x0080200e                __flp
                 0x00802010                PROVIDE (__bss_end, .)
-                0x000006be                __data_load_start = LOADADDR (.data)
-                0x000006c4                __data_load_end = (__data_load_start + SIZEOF (.data))
+                0x000006ca                __data_load_start = LOADADDR (.data)
+                0x000006d0                __data_load_end = (__data_load_start + SIZEOF (.data))
 
 .noinit         0x00802010        0x0
                 [!provide]                PROVIDE (__noinit_start, .)
@@ -586,10 +586,10 @@ END GROUP
  .debug_abbrev  0x00000000     0x3b0e O:/Atmel/Studio/7.0/Packs/atmel/XMEGAA_DFP/1.2.141/gcc/dev/atxmega128a1u/avrxmega7/crtatxmega128a1u.o
  .debug_abbrev  0x00003b0e      0x260 main.o
 
-.debug_line     0x00000000      0x61f
+.debug_line     0x00000000      0x62b
  *(.debug_line .debug_line.* .debug_line_end)
  .debug_line    0x00000000      0x3b5 O:/Atmel/Studio/7.0/Packs/atmel/XMEGAA_DFP/1.2.141/gcc/dev/atxmega128a1u/avrxmega7/crtatxmega128a1u.o
- .debug_line    0x000003b5      0x26a main.o
+ .debug_line    0x000003b5      0x276 main.o
 
 .debug_frame    0x00000000       0x98
  *(.debug_frame)

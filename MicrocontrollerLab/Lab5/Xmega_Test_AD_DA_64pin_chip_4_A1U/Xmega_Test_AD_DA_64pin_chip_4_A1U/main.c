@@ -55,27 +55,24 @@ int main (void)
 
 	ioinit();       //Setup IO pins and defaults
 	usart_init();  // Initialize the serial port
-
+	PORTD.DIRSET = (1<<6); //set PD7 as output for timing pin
 
     while(1)
     {
-
-	//	AD
+		//	AD
 		ADCA.CTRLA        = ADCA.CTRLA | ADC_CH0START_bm;       // Start Conversion
 		while(((ADCA.CH0.INTFLAGS & ADC_CH_CHIF_bm) == 0x00));   // Is the conversion is complete ?
 		
 	  	ADCA.CH0.INTFLAGS = ADC_CH_CHIF_bm;					   	// Clear interup flag by writing a one
 		AD_value = ADCA.CH0.RES;								// Read AD Value
 	
-	//	DA
+		//	DA
 		while ( (DACB.STATUS & DAC_CH0DRE_bm) == false );  // Wait for the DA regester to be empty
 		DACB.CH0DATA = AD_value;                           // write the DAC Value
  
 		//printf("AD_value = %d\n",AD_value);
-		
+		PORTD.OUTTGL = (1<<6);	//Toggle Pin D7 for timing
     }
-   
-    return(0);
 }
 
 void ioinit (void)
