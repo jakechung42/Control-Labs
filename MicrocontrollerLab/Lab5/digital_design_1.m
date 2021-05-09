@@ -103,3 +103,26 @@ raw_control_signal_step = data(:,3);
 % plot(t, y, 'd')
 % hold on
 % plot(t_scaled_ramp, tach_scaled_ramp, 'o') 
+
+%% plot the theoretical Lag controller data and experimental lag control data
+path = "D:\Github\Control-Labs\MicrocontrollerLab\Lab5\CSV_Lag_Controller_1.csv";
+data = csvread(path, 2, 0);
+raw_t_lag = data(:,1);
+raw_tach_lag = data(:,2);
+%plot raw data
+figure
+plot(raw_t_lag, raw_tach_lag, 'd')
+%shift and normalize data
+idx = find(raw_t_lag>0.195 & raw_t_lag<0.39);
+t_lag = raw_t_lag(idx);
+t_lag = t_lag - 0.195;
+tach_lag = raw_tach_lag(idx);
+tach_lag = tach_lag/5;
+[y, t] = step(sysControlledDigital_cl);
+figure
+plot(t_lag, tach_lag, 'd')
+hold on
+plot(t, y, 'o')
+grid on
+title('Comparing response of theoretical and experimental lag controller implementation')
+
