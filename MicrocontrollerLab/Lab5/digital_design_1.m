@@ -24,6 +24,25 @@ figure
 step(sysD_cl)
 grid on
 
+%from hand calculation in notebook
+a = 0.5649;
+T = 0.37581;
+w = tf('s');
+Gc_w = (1+a*T*w)/(1+T*w)
+figure
+bode(Gc_w*K*sysw)
+margin(Gc_w*K*sysw)
+grid on
+
+z = tf('z');
+temp = (2/Ts)*(z-1)/(z+1);
+LagController = (1+0.2123*temp)/(1+0.3758*temp)
+sysControlledDigital_cl = feedback(LagController*K*sysD,1)
+%step response of compensated system
+figure
+step(sysControlledDigital_cl)
+grid on
+
 %% comparing the theoretical response with the model response controller gain 1
 path = "D:\Github\Control-Labs\MicrocontrollerLab\Lab5\CSV_step_response_1.csv";
 data = csvread(path, 2, 0);
@@ -31,56 +50,56 @@ raw_t_step = data(:,1);
 raw_tach_step = data(:,2);
 raw_control_signal_step = data(:,3);
 % quick plot the raw data
-figure
-plot(raw_t_step, raw_tach_step, '.')
-hold on
-plot(raw_t_step, raw_control_signal_step, '.')
-title('Raw data of step response')
-legend('Tachometer', 'Control signal')
-
-path = "D:\Github\Control-Labs\MicrocontrollerLab\Lab5\CSV_ramp_response_1.csv";
-data = csvread(path, 2, 0);
-raw_t_ramp = data(:,1);
-raw_tach_ramp = data(:,2);
-raw_control_signal_ramp = data(:,3);
-% quick plot the raw ramp response data
-figure
-plot(raw_t_ramp, raw_tach_ramp, '.')
-hold on
-plot(raw_t_ramp, raw_control_signal_ramp, '.')
-title('Raw data of ramp response')
-legend('Tachometer', 'Control signal')
+% figure
+% plot(raw_t_step, raw_tach_step, '.')
+% hold on
+% plot(raw_t_step, raw_control_signal_step, '.')
+% title('Raw data of step response')
+% legend('Tachometer', 'Control signal')
+% 
+% path = "D:\Github\Control-Labs\MicrocontrollerLab\Lab5\CSV_ramp_response_1.csv";
+% data = csvread(path, 2, 0);
+% raw_t_ramp = data(:,1);
+% raw_tach_ramp = data(:,2);
+% raw_control_signal_ramp = data(:,3);
+% % quick plot the raw ramp response data
+% figure
+% plot(raw_t_ramp, raw_tach_ramp, '.')
+% hold on
+% plot(raw_t_ramp, raw_control_signal_ramp, '.')
+% title('Raw data of ramp response')
+% legend('Tachometer', 'Control signal')
 
 %% plot the theoretical response and the raw data for step response
 %scale and adjust the raw data to show only step response
-temp = raw_t_step - 0.1975; %need to shift the data 
-idx = find(temp>0);
-t_scaled = temp(idx);
-tach_scaled = raw_tach_step(idx);
-tach_scaled = tach_scaled/5; %normalize to the theoretical response
-[y, t] = step(sysD_cl);
-figure
-plot(t_scaled, tach_scaled, '-o')
-hold on
-plot(t, y, 'd')
-grid on
-
-%plot the difference between raw and theoretical
-t_scaled = t_scaled(1:length(t));
-tach_scaled = tach_scaled(1:length(t));
-figure
-plot(t_scaled, tach_scaled-y, 'd')
-title('Difference between theoretical and experimental')
+% temp = raw_t_step - 0.1975; %need to shift the data 
+% idx = find(temp>0);
+% t_scaled = temp(idx);
+% tach_scaled = raw_tach_step(idx);
+% tach_scaled = tach_scaled/5; %normalize to the theoretical response
+% [y, t] = step(sysD_cl);
+% figure
+% plot(t_scaled, tach_scaled, '-o')
+% hold on
+% plot(t, y, 'd')
+% grid on
+% 
+% %plot the difference between raw and theoretical
+% t_scaled = t_scaled(1:length(t));
+% tach_scaled = tach_scaled(1:length(t));
+% figure
+% plot(t_scaled, tach_scaled-y, 'd')
+% title('Difference between theoretical and experimental')
 %% plot the theoretical response and raw data for ramp response
 %scale and adjust the raw data to show only ramp response
-idx = find(raw_t_ramp>0 & raw_t_ramp<0.4);
-t_scaled_ramp = raw_t_ramp(idx);
-tach_scaled_ramp = raw_tach_ramp(idx);
-tach_scaled_ramp = tach_scaled_ramp+1;
-t = linspace(0, 0.4, 0.2/Ts);
-ramp_input = t;
-y = lsim(sys_cl, ramp_input, t, 'zoh');
-figure
-plot(t, y, 'd')
-hold on
-plot(t_scaled_ramp, tach_scaled_ramp, 'o') 
+% idx = find(raw_t_ramp>0 & raw_t_ramp<0.4);
+% t_scaled_ramp = raw_t_ramp(idx);
+% tach_scaled_ramp = raw_tach_ramp(idx);
+% tach_scaled_ramp = tach_scaled_ramp+1;
+% t = linspace(0, 0.4, 0.2/Ts);
+% ramp_input = t;
+% y = lsim(sys_cl, ramp_input, t, 'zoh');
+% figure
+% plot(t, y, 'd')
+% hold on
+% plot(t_scaled_ramp, tach_scaled_ramp, 'o') 
