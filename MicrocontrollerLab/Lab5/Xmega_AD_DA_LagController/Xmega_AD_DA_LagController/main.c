@@ -139,6 +139,7 @@ ISR(TCC1_OVF_vect)
 		                                                     // Note the Velocity Set Point is in Control Voltage Units (+- 10 volts)
 
 	//	Read tachometer sensor value
+	PORTC_OUT ^= (1 << 0);								// Toggle P0 on port C to check timing
 	ADCA.CTRLA = ADCA.CTRLA | ADC_CH0START_bm;       			// Start Conversion
 	while(((ADCA.CH0.INTFLAGS & ADC_CH_CHIF_bm) == 0x00));   	// Is the conversion is complete ?
 	
@@ -173,7 +174,6 @@ ISR(TCC1_OVF_vect)
 													// Note the output is +- 10 Volts  which corresponds to 0 to 4095
 	// DACB.CH1DATA = DAC_output;                     // Write the DAC Value
 		
-	PORTC_OUT ^= (1 << 0);								// Toggle P0 on port C to check timing
 														// Note the frequency of the displayed square wave 
 														// is one half of the actual cycle frequency
 														// because the cycle frequency is the time the signal
@@ -225,7 +225,7 @@ void ioinit (void)
 	// Setup DAC channel B with the DA reference set to the Internal 1 volt supply voltage and DA data left adjust false
 	
 		DAC_CalibrationValues_Set(&DACB);
-		DACB.CTRLB |= DAC_CHSEL_DUAL_gc;
+		DACB.CTRLB |= DAC_CHSEL_SINGLE_gc;
 //		DACB.CTRLC |= DAC_REFSEL_INT1V_gc;	// 1 volt internal reference. 
 		DACB.CTRLC |= DAC_REFSEL_AVCC_gc;	// 3.3 volt internal reference.		DACB.CH0DATAH = 0x00;
 		DACB.CH1DATAH = 0x00;
