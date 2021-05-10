@@ -34,7 +34,7 @@
 
 
 // macros for serial baudrate
-#define BAUD 921600
+#define BAUD 9600
 #define f_PER 32000000
 #define BSCALE 	-6
 #define BSEL 	75
@@ -121,14 +121,14 @@ int main (void)
 		DAC_output = floor(Vel_Set_v/5.0*4095.0);  	// Convert control voltage to a digital number for output
 													// Note the output is +- 10 Volts  which corresponds to 0 to 4095
 		DACB.CH1DATA = DAC_output;                     // Write the DAC Value
-		
+
 		PORTC_OUT ^= (1 << 0);								// Toggle P0 on port C to check timing
 															// Note the frequency of the displayed square wave 
 															// is one half of the actual cycle frequency
 															// because the cycle frequency is the time the signal
 															// is on or off not the entire cycle
 		
-		//printf("AD_value = %d\n",AD_value);
+		printf("AD_value = %d\n",AD_value);
 		
 	}
 	
