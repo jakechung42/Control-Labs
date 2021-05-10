@@ -104,6 +104,21 @@ raw_control_signal_step = data(:,3);
 % hold on
 % plot(t_scaled_ramp, tach_scaled_ramp, 'o') 
 
+%% plot the xmega controller data
+path = "D:\Github\Control-Labs\MicrocontrollerLab\Lab5\CSV_Lag_Controller_Xmega_1.csv";
+data = csvread(path, 2, 0);
+raw_t_lag_xmega = data(:,1);
+raw_tach_lag_xmega = data(:,2);
+%plot raw data
+figure
+plot(raw_t_lag_xmega, raw_tach_lag_xmega, 'd')
+%shift and normalize the data
+idx = find(raw_t_lag_xmega>=0.992 & raw_t_lag_xmega<1.98);
+t_lag_xmega = raw_t_lag_xmega(idx);
+t_lag_xmega = t_lag_xmega - 0.992;
+tach_lag_xmega = raw_tach_lag_xmega(idx);
+tach_lag_xmega = tach_lag_xmega/5; %normalize by the input 5V
+
 %% plot the theoretical Lag controller data and experimental lag control data
 path = "D:\Github\Control-Labs\MicrocontrollerLab\Lab5\CSV_Lag_Controller_1.csv";
 data = csvread(path, 2, 0);
@@ -125,4 +140,4 @@ hold on
 plot(t, y, 'o')
 grid on
 title('Comparing response of theoretical and experimental lag controller implementation')
-
+plot(t_lag_xmega, tach_lag_xmega, 'd')
