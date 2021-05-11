@@ -48,3 +48,44 @@ semilogx(f, phase_t)
 xlabel('Frequency (Hz)')
 ylabel('Phase')
 grid on
+
+%% compare step response PI controller theoretical and experimental
+path = "D:\Github\Control-Labs\ControlLab\Lab5\PI_Controller_rawData_1.csv";
+
+A = csvread(path, 2, 0);
+
+t_step_raw = A(:,1);
+V_in_step_raw = A(:,2);
+V_out_step_raw = A(:,3);
+
+%plot raw data
+figure
+plot(t_step_raw, V_in_step_raw)
+hold on
+plot(t_step_raw, V_out_step_raw)
+%shift the raw data
+shift_idx = find(t_step_raw >= -1.544 & t_step_raw <0);
+t_step = t_step_raw(shift_idx);
+V_in_step = V_in_step_raw(shift_idx);
+V_out_step = V_out_step_raw(shift_idx);
+t_step = t_step + 1.544; %shift time to 0
+V_in_step = V_in_step + abs(min(V_in_step)); %shift to positive 
+V_out_step = V_out_step + abs(min(V_out_step)); %shift to positive
+%plot the shifted data
+figure
+plot(t_step, V_in_step, t_step, V_out_step)
+xlabel('Time (s)')
+ylabel('Voltage (s)')
+legend('Input signal', 'Response')
+title('Shifted raw data from scope for PI controller implementation')
+grid on
+
+%% plot to compare the step response of scope and theoretical
+[y, t] = step(control_clrp);
+V_out_step_normed = V_out_step/(max(V_in_step_raw)-min(V_in_step_raw)); %normalize the scope data to 1V
+figure
+plot(t_step, V_out_step_normed, 'd')
+hold on
+plot(t, y)
+title('Comparing the theoretical response and scope data - PI implementation')
+legend('Scope', 'Theoretical')
