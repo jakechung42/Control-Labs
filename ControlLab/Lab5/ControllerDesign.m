@@ -8,7 +8,7 @@ clc;
 %this code design some example controllers for the motor model
 
 %% Read raw data of the step response for the 0.2 gain controller
-path = "D:\Github\Control-Labs\ControlLab\Lab5\CSV_20215215582.csv";
+path = "D:\Github\Control-Labs\ControlLab\Lab5\gainController_1.2.csv";
 data = csvread(path, 2, 0);
 figure
 t_step = data(:,1);
@@ -18,10 +18,11 @@ V_out_step = data(:,3);
 plot(t_step, V_in_step, t_step, V_out_step)
 figure
 %shift and scale the data
-pos_idx = find(t_step > 0 & t_step < 0.08);
+pos_idx = find(t_step > 0.133 & t_step < 0.251);
 t_step = t_step(pos_idx);
+t_step = t_step - 0.134;
 V_in_step = V_in_step(pos_idx);
-V_in_step = V_in_step + min(V_in_step);
+V_in_step = V_in_step - min(V_in_step);
 V_out_step = V_out_step(pos_idx);
 V_out_step = V_out_step - min(V_out_step);
 plot(t_step, V_out_step)
@@ -67,26 +68,31 @@ t_step_mod_ol = linspace(0, 0.2, length(t_step_ol));
 [ol_response] = lsim(Gp, V_in_step_ol, t_step_mod_ol);
 
 %% design params
-%want PMO ~ 30%
-z_d = 0.75;
-t_rise = 0.002;
+%want PMO ~ 5%
+z_d = 0.65;
+t_rise = 0.005;
 omegan_d = (1-0.4167*z_d+2.917*z_d^2)/t_rise;
 s1 = -z_d*omegan_d+sqrt(1-z_d^2)*omegan_d*j
 s2 = -z_d*omegan_d-sqrt(1-z_d^2)*omegan_d*j
 %plot the desired roots
-% hold on
-% plot(-z_d*omegan_d, sqrt(1-z_d^2)*omegan_d, 'd')
-% plot(-z_d*omegan_d, -sqrt(1-z_d^2)*omegan_d, 'd')
-% hold off
+figure
+rlocus(num, den)
+hold on
+plot(-z_d*omegan_d, sqrt(1-z_d^2)*omegan_d, 'd')
+plot(-z_d*omegan_d, -sqrt(1-z_d^2)*omegan_d, 'd')
+hold off
 % K = abs(s2^2+1728*s2+1.194e5)/abs(2.388e5)
-K = 0.2;
+K = 1.25;
 num = K*2.388E5;
 den = [0.002 3.765 1621 1.194E5+K*2.388E5];
 sys = tf(num, den);
+figure 
+step(Gp)
 hold on
 step(sys);
 legend('OLRP', 'CLRP')
-
+stepinfo(sys)
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
 %% plot the raw response and the theoretical response
 t_step_mod = linspace(0, max(t_step), length(V_out_step));
 [step_data] = lsim(sys, V_in_step, t_step_mod);
