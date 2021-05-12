@@ -44,3 +44,15 @@ subplot(2, 1, 2)
 semilogx(f, phase_clrp)
 grid on
 xlabel('Frequency (Hz)')
+
+%% analyze the disturbance response
+%check the Bode plot
+dis_sys = feedback(Gp, G_PI);
+figure
+bode(dis_sys)
+figure
+step(dis_sys)
+title('Response of an input step disturbance signal')
+stepinfo(dis_sys)
+
+
