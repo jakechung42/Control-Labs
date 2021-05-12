@@ -30,13 +30,25 @@ figure
 step(control_clrp)
 grid on
 stepinfo(control_clrp)
+w = logspace(0.5, 3);
+f = w/(2*pi);
+[mag_clrp, phase_clrp] = bode(control_clrp, w); %bode of the clrp. I should see this from my data collection
+mag_clrp = squeeze(mag_clrp);
+phase_clrp = squeeze(phase_clrp);
+figure
+subplot(2, 1, 1)
+semilogx(f, 20*log10(mag_clrp))
+grid on
+title('Bode of the entire system with PI controller')
+subplot(2, 1, 2)
+semilogx(f, phase_clrp)
+grid on
+xlabel('Frequency (Hz)')
 
 %get data of the bode rp
-w = logspace(0.5, 3);
 [mag_t, phase_t] = bode(G_PI*Gp, w);
 mag_t = squeeze(mag_t);
 phase_t = squeeze(phase_t);
-f = w/(2*pi);
 figure
 subplot(2,1,1)
 semilogx(f, mag_t)
@@ -89,3 +101,32 @@ hold on
 plot(t, y)
 title('Comparing the theoretical response and scope data - PI implementation')
 legend('Scope', 'Theoretical')
+grid on
+
+%% reconstruct Bode plot of the compensated system from raw data
+path = "D:\Github\Control-Labs\ControlLab\Lab5\raw_data_PI_Controller.dat";
+data = load(path, "ASCII");
+
+scope_freq = data(:,1);
+scope_mag = 20*log10(data(:,2));
+scope_phase = data(:,3);
+
+%plot the raw data
+figure 
+subplot(2, 1, 1)
+semilogx(scope_freq, scope_mag, 'd')
+hold on
+semilogx(f, 20*log10(mag_clrp))
+grid on
+title('Raw data from scope for PI controlled system')
+ylabel('Mag (dB)')
+subplot(2, 1, 2)
+semilogx(scope_freq, scope_phase, 'd')
+hold on
+semilogx(f, phase_clrp)
+xlabel('Frequency (Hz)')
+ylabel('Phase')
+grid on
+
+
+
