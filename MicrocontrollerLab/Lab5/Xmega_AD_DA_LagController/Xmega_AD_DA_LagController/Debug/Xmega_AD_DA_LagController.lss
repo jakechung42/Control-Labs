@@ -1031,11 +1031,11 @@ int main (void)
      868:	90 93 27 20 	sts	0x2027, r25	; 0x802027 <Step_Amplitude+0x1>
      86c:	a0 93 28 20 	sts	0x2028, r26	; 0x802028 <Step_Amplitude+0x2>
      870:	b0 93 29 20 	sts	0x2029, r27	; 0x802029 <Step_Amplitude+0x3>
-	Input_Increment = .001;		    // This variable is used to specify the desired frequency
-     874:	8f e6       	ldi	r24, 0x6F	; 111
-     876:	92 e1       	ldi	r25, 0x12	; 18
-     878:	a3 e8       	ldi	r26, 0x83	; 131
-     87a:	ba e3       	ldi	r27, 0x3A	; 58
+	Input_Increment = .007;		    // This variable is used to specify the desired frequency
+     874:	82 e4       	ldi	r24, 0x42	; 66
+     876:	90 e6       	ldi	r25, 0x60	; 96
+     878:	a5 ee       	ldi	r26, 0xE5	; 229
+     87a:	bb e3       	ldi	r27, 0x3B	; 59
      87c:	80 93 22 20 	sts	0x2022, r24	; 0x802022 <Input_Increment>
      880:	90 93 23 20 	sts	0x2023, r25	; 0x802023 <Input_Increment+0x1>
      884:	a0 93 24 20 	sts	0x2024, r26	; 0x802024 <Input_Increment+0x2>
@@ -1900,8 +1900,8 @@ int main (void)
      f3a:	30 91 03 20 	lds	r19, 0x2003	; 0x802003 <__malloc_heap_start+0x1>
      f3e:	20 93 4c 20 	sts	0x204C, r18	; 0x80204c <__brkval>
      f42:	30 93 4d 20 	sts	0x204D, r19	; 0x80204d <__brkval+0x1>
-     f46:	20 91 00 20 	lds	r18, 0x2000	; 0x802000 <__data_start>
-     f4a:	30 91 01 20 	lds	r19, 0x2001	; 0x802001 <__data_start+0x1>
+     f46:	20 91 00 20 	lds	r18, 0x2000	; 0x802000 <__DATA_REGION_ORIGIN__>
+     f4a:	30 91 01 20 	lds	r19, 0x2001	; 0x802001 <__DATA_REGION_ORIGIN__+0x1>
      f4e:	21 15       	cp	r18, r1
      f50:	31 05       	cpc	r19, r1
      f52:	41 f4       	brne	.+16     	; 0xf64 <malloc+0xea>

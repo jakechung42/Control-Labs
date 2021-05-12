@@ -103,7 +103,7 @@ int main (void)
     Sawtooth           = -1.0;			// Initial value
 	Sawtooth_Amplitude = 5.0;
 	Step_Amplitude     = 5.0;
-	Input_Increment = .001;		    // This variable is used to specify the desired frequency
+	Input_Increment = .007;		    // This variable is used to specify the desired frequency
 										// Frequency = Input_Increment*SampleFrequency/2
 										// Approximately 1HZ output frequency for Input_Increment    = 0.0001
 										// Approximately 10HZ output frequency for Input_Increment   = 0.001
