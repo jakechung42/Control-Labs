@@ -109,4 +109,32 @@ figure
 step(sys_cl_PI_PD)
 Gc_PID = Gc_PD*Gc_PI
 
-
+%% read raw step response data for the PID controller
+path = "D:\Github\Control-Labs\ControlLab\Lab6\rawData_PID_controller.csv";
+step_PID_raw = csvread(path, 2, 0);
+step_time_PID = step_PID_raw(:,1);
+step_V_in_PID = step_PID_raw(:,2);
+step_V_out_PID = step_PID_raw(:,3);
+%plot the raw data
+figure
+plot(step_time_PID, step_V_in_PID, step_time_PID, step_V_out_PID)
+title('Raw data of the PID controled system step response')
+ylabel('Voltage (V)')
+xlabel('Time (s)')
+%scale and shift the time data
+idx = find(step_time_PID > 0 & step_time_PID < 0.0446);
+step_time_PID = step_time_PID(idx);
+step_V_in_PID = step_V_in_PID(idx);
+step_V_out_PID = step_V_out_PID(idx);
+step_V_out_PID = (step_V_out_PID + 1)/2;
+%generate the theoretical response data
+time_mod_PID = linspace(min(step_time_PID), max(step_time_PID), length(step_time_PID));
+[cl_PID] = step(sys_cl_PI_PD, time_mod_PID);
+%plot to compare the data
+figure
+plot(time_mod_PID, cl_PID)
+hold on
+plot(step_time_PID, step_V_out_PID, 'd')
+ylabel('Voltage (V)')
+xlabel('Time (s)')
+title('Comparing the PID controlled step response')
