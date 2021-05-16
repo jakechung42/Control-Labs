@@ -16,6 +16,9 @@ V_in_step = data(:,2);
 V_out_step = data(:,3);
 %plot raw
 plot(t_step, V_in_step, t_step, V_out_step)
+legend('Input signal', 'Output signal')
+xlabel('Time (s)')
+ylabel('Voltage (V)')
 figure
 %shift and scale the data
 pos_idx = find(t_step > 0.133 & t_step < 0.251);
@@ -100,6 +103,9 @@ figure
 plot(t_step, V_out_step, 'o')
 hold on 
 plot(t_step_mod, step_data)
+ylabel('Voltage (V)')
+xlabel('Time (s)')
+legend('Oscilloscope data', 'Calculated response')
 
 %% plot and compare the response of OLRP and CLRP 0.2 gain controller
 figure

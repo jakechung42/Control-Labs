@@ -44,9 +44,15 @@ figure
 subplot(2, 1, 1)
 semilogx(w_data, 20*log10(mag_data), 'o')
 hold on
+ylabel('Magnitude (dB)')
+grid on
+title('Adding another pole to help match the motor model')
 semilogx(w, 20*log10(mag_t))
 subplot(2, 1, 2)
 semilogx(w_data, phase_data, 'o')
+xlabel('Frequency (Hz)')
+ylabel('Phase (degrees)')
+grid on
 hold on
 semilogx(w, phase_t)
 

@@ -15,9 +15,13 @@ w_data = f_data*2*pi;
 figure
 subplot(2 ,1, 1)
 semilogx(f_data, 20*log10(mag_data), 'o')
+ylabel('Magnitude (dB)')
+title('Raw data for frequency response analysis')
 grid on
 subplot(2 ,1, 2)
 semilogx(f_data, phase_data, 'o')
+xlabel('Frequency (Hz)')
+ylabel('Phase (degrees)')
 grid on
 
 %% Find the transfer function that fit the experimental data
@@ -39,10 +43,16 @@ phase_t = squeeze(phase_t);
 figure
 subplot(2, 1, 1)
 semilogx(w_data, 20*log10(mag_data), 'o')
+ylabel('Magnitude (dB)')
+title('2nd order match with raw data')
+grid on
 hold on
 semilogx(w, 20*log10(mag_t))
 subplot(2, 1, 2)
 semilogx(w_data, phase_data, 'o')
+xlabel('Frequency (Hz)')
+ylabel('Phase (degrees)')
+grid on
 hold on
 semilogx(w, phase_t)
 
