@@ -132,9 +132,9 @@ time_mod_PID = linspace(min(step_time_PID), max(step_time_PID), length(step_time
 [cl_PID] = step(sys_cl_PI_PD, time_mod_PID);
 %plot to compare the data
 figure
-plot(time_mod_PID, cl_PID)
-hold on
 plot(step_time_PID, step_V_out_PID, 'd')
+hold on
+plot(time_mod_PID, cl_PID, 'LineWidth', 2)
 ylabel('Voltage (V)')
 xlabel('Time (s)')
 title('Comparing the PID controlled step response')
