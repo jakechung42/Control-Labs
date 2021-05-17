@@ -37,8 +37,8 @@ uint8_t SP_ReadCalibrationByte( uint8_t index );
 // inside the interupt function must be declared as volatile.
 
 /***** Parameters to Change ******/
-volatile float Kp = 0;				//Proportional Gain
-volatile float 	Ts = 0.000200;		//Sample Time set by period of TCC1. Max of 0.00819 with Clk/4
+volatile float Kp = 1.0;				//Proportional Gain
+volatile float 	Ts = 0.00100;		//Sample Time set by period of TCC1. Max of 0.00819 with Clk/4
 /*********************************/
 
 volatile uint16_t	topCount = 0;		//TOP value for interrupt timer
@@ -91,28 +91,32 @@ ISR(TCC1_OVF_vect)
 {
 	
 	adcIn = ADCA.CH0.RES;				//read setpoint from ADC
-	setPoint = (adcIn/4095.)-0.030;		//convert to voltage
-	//setPoint = 0.5;                   //Set the setpoint to midrange for initial testing of the controller
+	setPoint = (adcIn/4095.);		//convert to voltage
+	// setPoint = (adcIn/4095.)-0.030;		//convert to voltage
+	// setPoint = 2;                   //Set the setpoint to midrange for initial testing of the controller
 	
 	encCount = TCC0.CNT;			//read encoder
 	if(encCount < 0) encCount = 0;	//out of bounds check  (encoder count should not be below zero)
 	
 	position = encCount/700.;		//encoder range of 0-700 mapped to 0-1V
 	positionDAC = (position*4095.);	//convert arm postition to DAC output
+	// printf("positionDAC = %d, position = %d, encCount = %d\n", (int)(positionDAC), (int)(position*100), (int)encCount);
 	if(positionDAC < 0) positionDAC = 0;	//rollover check
-	
+	// positionDAC = 2048;
+	// position = 0.0;
+
 	error = setPoint - position;			//compute error
 	
 	/****** Control Equation ******/
 	
-	ctrlCorrection = 0.0;  // Initial value
+	ctrlCorrection = 0.3;  // Initial value
 	//ctrlCorrection = 0.495;  // Control Correction to Correct the Single ended to Bipolar circuit zero offset
 	// For my circuit the output of the Single ended to Bipolar circuit equaled -0.495 volts
 	// when the control input (ctrlOut = 0.0) equalled 0.
 	
 	
 	ctrlOut = Kp * error;
-	//ctrlOut = 0.0;        // Set ctrlOut=0 and read the value of the voltage offset at the output of
+	// ctrlOut = 0.0;        // Set ctrlOut=0 and read the value of the voltage offset at the output of
 	// the Single ended to Bipolar circuit.  In a perfect world this value would be zero.
 	// This value is used to calculate ctrlCorrection.  That is ctrlCorrection = -output value.
 	
@@ -128,12 +132,20 @@ ISR(TCC1_OVF_vect)
 	//ctrlDAC = 0;											// Used to check the voltage of the DAC
 
 	
-	while((DACB.STATUS & DAC_CH0DRE_bm)==0);
-	DACB.CH0DATA = (int)ctrlDAC;				//Write ctrl signal to DACB channel 0
-	while((DACB.STATUS & DAC_CH1DRE_bm)==0);
-	DACB.CH1DATA = (int)positionDAC;					//Write arm position to DACB channel 1
+	// while((DACB.STATUS & DAC_CH0DRE_bm)==0);
+	// DACB.CH0DATA = (int)ctrlDAC;				//Write ctrl signal to DACB channel 0
+	// while((DACB.STATUS & DAC_CH1DRE_bm)==0);
+	// DACB.CH1DATA = (int)positionDAC;					//Write arm position to DACB channel 1
 
-	//printf("Error = %d, ctrlOut = %d, Position = %d, ctrlDac = %d, PositionDac = %d\n", (int)(error*100), (int)(ctrlOut*100), (int)(position*100), (int)ctrlDAC, (int)positionDAC);
+	// flip the order to check channel 0 and channel 1
+	printf("positionDAC = %d\n", (int)(positionDAC));
+	while((DACB.STATUS & DAC_CH0DRE_bm)==0);
+	DACB.CH0DATA = (int)positionDAC;				//Write arm position to DACB channel 0
+	while((DACB.STATUS & DAC_CH1DRE_bm)==0);
+	DACB.CH1DATA = (int)ctrlDAC;					//Write ctrl signal to DACB channel 1
+
+	
+	// printf("Error = %d, ctrlOut = %d, Position = %d, ctrlDac = %d, PositionDac = %d\n", (int)(error*100), (int)(ctrlOut*100), (int)(position*100), (int)ctrlDAC, (int)positionDAC);
 	
 	PORTD.OUTTGL = (1<<7);	//Toggle Pin D7 for timing
 }
@@ -204,7 +216,7 @@ void dac_init(void)
 	DAC_CalibrationValues_Set(&DACB);
 	DACB.CTRLB |= DAC_CHSEL_DUAL_gc;
 	DACB.CTRLC |= DAC_REFSEL_INT1V_gc;	// 1 volt internal reference. bug in xmega makes 0-.75v output noisy when using reference above 2v
-	//DACB.TIMCTRL |= DAC_CONINTVAL_32CLK_gc;
+	// DACB.TIMCTRL |= DAC_CONINTVAL_32CLK_gc;
 	DACB.CH0DATAH = 0x00;
 	DACB.CH1DATAH = 0x00;
 	DACB.CTRLA |= DAC_ENABLE_bm | DAC_CH0EN_bm | DAC_CH1EN_bm;
