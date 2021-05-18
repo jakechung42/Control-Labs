@@ -91,8 +91,8 @@ ISR(TCC1_OVF_vect)
 {
 	
 	adcIn = ADCA.CH0.RES;				//read setpoint from ADC
-	setPoint = (adcIn/4095.);		//convert to voltage
-	// setPoint = (adcIn/4095.)-0.030;		//convert to voltage
+	// setPoint = (adcIn/4095.);		//convert to voltage.0.
+	setPoint = (adcIn/4095.)-0.030;		//convert to voltage
 	// setPoint = 2;                   //Set the setpoint to midrange for initial testing of the controller
 	
 	encCount = TCC0.CNT;			//read encoder
@@ -101,6 +101,7 @@ ISR(TCC1_OVF_vect)
 	position = encCount/700.;		//encoder range of 0-700 mapped to 0-1V
 	positionDAC = (position*4095.);	//convert arm postition to DAC output
 	// printf("positionDAC = %d, position = %d, encCount = %d\n", (int)(positionDAC), (int)(position*100), (int)encCount);
+	// printf("encCount = %d\n", (int)encCount);
 	if(positionDAC < 0) positionDAC = 0;	//rollover check
 	// positionDAC = 2048;
 	// position = 0.0;
@@ -109,7 +110,7 @@ ISR(TCC1_OVF_vect)
 	
 	/****** Control Equation ******/
 	
-	ctrlCorrection = 0.3;  // Initial value
+	ctrlCorrection = -0.531;  // Initial value
 	//ctrlCorrection = 0.495;  // Control Correction to Correct the Single ended to Bipolar circuit zero offset
 	// For my circuit the output of the Single ended to Bipolar circuit equaled -0.495 volts
 	// when the control input (ctrlOut = 0.0) equalled 0.
@@ -138,7 +139,7 @@ ISR(TCC1_OVF_vect)
 	// DACB.CH1DATA = (int)positionDAC;					//Write arm position to DACB channel 1
 
 	// flip the order to check channel 0 and channel 1
-	printf("positionDAC = %d\n", (int)(positionDAC));
+	// printf("positionDAC = %d\n", (int)(positionDAC));
 	while((DACB.STATUS & DAC_CH0DRE_bm)==0);
 	DACB.CH0DATA = (int)positionDAC;				//Write arm position to DACB channel 0
 	while((DACB.STATUS & DAC_CH1DRE_bm)==0);
