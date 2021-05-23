@@ -66,6 +66,8 @@ Gc_lag_z = c2d(Gc_lag_w, Ts, 'tustin');
 sysD_cl_lead_lag = feedback(K*Gc_lead_z*Gc_lag_z*ol_sysD, 1);
 step(sysD_cl_lead_lag)
 stepinfo(sysD_cl_lead_lag)
+fprintf('Control equation for Lead Lag controller')
+K*Gc_lead_z*Gc_lag_z
 
 %% design a PI controller to stack with the lead controller the lag controller didn't perform very well
 % Gp_mag = 6.72;
