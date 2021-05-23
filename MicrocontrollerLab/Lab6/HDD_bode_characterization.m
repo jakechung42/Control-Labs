@@ -43,6 +43,9 @@ figure
 subplot(2,1,1)
 semilogx(w/(2*pi), 20*log10(mag_m))
 hold on
+
+%% tf of the system - open loop
+sys = 1.437e6/(s^3+484.5*s^2+38025*s+2.53e5)
 semilogx(freq_raw, 20*log10(mag_raw), 'd')
 ylabel('Magnitude (dB)')
 subplot(2,1,2)
