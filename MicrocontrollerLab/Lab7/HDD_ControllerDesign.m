@@ -27,16 +27,16 @@ figure
 step(cl_sysD_pp)
 
 %% Lead controller design
-% K = 1; %for running Lead and PI controller
-K = 3; %for running Lead and Lag controller
+K = 1; %for running Lead and PI controller
+% K = 3; %for running Lead and Lag controller
 sysw = d2c(K*ol_sysD, 'tustin')  %this is actually the w transform
 figure
 margin(sysw)
 w = tf('s');
 %control params for lead controller
 a = (1+sind(80))/(1-sind(80));
-% wm = 300; %for Lead and PI controller
-wm = 380; %for Lead and Lag controller
+wm = 300; %for Lead and PI controller
+% wm = 380; %for Lead and Lag controller
 T = 1/(sqrt(a)*wm);
 Gc_lead_w = (1+a*T*w)/(1+T*w);
 figure
@@ -52,35 +52,37 @@ title('Step response to system with Lead controller')
 fprintf('Closed loop response to lead controller')
 stepinfo(sysD_cl_lead)
 
+
 %% design a lag controller design stacking with the lead controller
-Gp_mag = 13.9;
-wg = 41;
-a = 10^(-Gp_mag/20);
-T = 10/(wg*a);
-Gc_lag_w = (1+a*T*w)/(1+T*w)
-%check bode for the lead and lag controller
-figure
-margin(Gc_lag_w*Gc_lead_w*sysw)
-%check the response
-Gc_lag_z = c2d(Gc_lag_w, Ts, 'tustin');
-sysD_cl_lead_lag = feedback(K*Gc_lead_z*Gc_lag_z*ol_sysD, 1);
-step(sysD_cl_lead_lag)
-stepinfo(sysD_cl_lead_lag)
-fprintf('Control equation for Lead Lag controller')
-K*Gc_lead_z*Gc_lag_z
+% Gp_mag = 13.9;
+% wg = 41;
+% a = 10^(-Gp_mag/20);
+% T = 10/(wg*a);
+% Gc_lag_w = (1+a*T*w)/(1+T*w)
+% %check bode for the lead and lag controller
+% figure
+% margin(Gc_lag_w*Gc_lead_w*sysw)
+% %check the response
+% Gc_lag_z = c2d(Gc_lag_w, Ts, 'tustin');
+% sysD_cl_lead_lag = feedback(K*Gc_lead_z*Gc_lag_z*ol_sysD, 1);
+% step(sysD_cl_lead_lag)
+% stepinfo(sysD_cl_lead_lag)
+% fprintf('Control equation for Lead Lag controller')
+% K*Gc_lead_z*Gc_lag_z
 
 %% design a PI controller to stack with the lead controller the lag controller didn't perform very well
-% Gp_mag = 6.72;
-% wg = 24;
-% Kp = 10^(-Gp_mag/20);
-% Ki = Kp*wg/10;
-% Gc_PI_w = (Ki+Kp*w)/w;
-% figure
-% margin(Gc_PI_w*Gc_lead_w*sysw) % bode plot for the Lead PI controller
-% % title('Bode plot for Lead PI controller')
-% Gc_PI_z = c2d(Gc_PI_w, Ts, 'tustin');
-% sysD_cl_lead_PI = feedback(Gc_lead_z*Gc_PI_z*ol_sysD, 1);
-% figure
-% step(sysD_cl_lead_PI)
-% fprintf('Closed loop response lead - PI controller')
-% stepinfo(sysD_cl_lead_PI)
+Gp_mag = 6.72;
+wg = 24;
+Kp = 10^(-Gp_mag/20);
+Ki = Kp*wg/10;
+Gc_PI_w = (Ki+Kp*w)/w;
+figure
+margin(Gc_PI_w*Gc_lead_w*sysw) % bode plot for the Lead PI controller
+% title('Bode plot for Lead PI controller')
+Gc_PI_z = c2d(Gc_PI_w, Ts, 'tustin');
+sysD_cl_lead_PI = feedback(Gc_lead_z*Gc_PI_z*ol_sysD, 1);
+figure
+step(sysD_cl_lead_PI)
+fprintf('Closed loop response lead - PI controller')
+stepinfo(sysD_cl_lead_PI)
+Gc_lead_z*Gc_PI_z
