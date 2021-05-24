@@ -18,7 +18,7 @@ step(ol_sys)
 title('Open-loop response')
 
 %% check the close loop proportional controller with K=1
-Ts = 1/1e3; %1k Hz samping frequency
+Ts = 1/5e3; %5k Hz samping frequency
 ol_sysD = c2d(ol_sys, Ts, 'ZOH') 
 cl_sysD_pp = feedback(ol_sysD*1, 1)
 fprintf('Closed loop response to proportional controller')
@@ -27,8 +27,7 @@ figure
 step(cl_sysD_pp)
 
 %% Lead controller design
-K = 1; %for running Lead and PI controller
-% K = 3; %for running Lead and Lag controller
+K = 1; %for running Lead
 sysw = d2c(K*ol_sysD, 'tustin')  %this is actually the w transform
 figure
 margin(sysw)
@@ -54,34 +53,34 @@ fprintf('Closed loop response to lead controller')
 stepinfo(sysD_cl_lead)
 
 %% read the raw data
-path = "D:\Github\Control-Labs\MicrocontrollerLab\Lab7\Lead_controller_scope_data.csv";
-raw_scope_data = csvread(path, 2, 0);
-scope_time = raw_scope_data(:,1);
-scope_input = raw_scope_data(:,2);
-scope_output = raw_scope_data(:,3);
-
-%scle and shift the data
-scope_input = scope_input - min(scope_input);
-scope_output = scope_output - min(scope_output);
-%plot raw data
-figure
-plot(scope_time, scope_input)
-hold on
-plot(scope_time, scope_output)
-title('Raw scope data')
-xlabel('Time (s)')
-ylabel('Voltage(V)')
-
-idx = find(scope_time >= 0 & scope_time <0.227);
-scope_time = scope_time(idx);
-scope_input = scope_input(idx);
-scope_output = scope_output(idx);
-scope_time_mod = linspace(0, max(scope_time), length(scope_time));
-model_lead_sys = lsim(sysD_cl_lead, scope_input, scope_time_mod);
-
-%plot the model vs scope data
-figure
-plot(scope_time_mod, model_lead_sys)
-hold on
-plot(scope_time, scope_output, 'd')
-title('Comparing the step response of system with lead controller')
+% path = "D:\Github\Control-Labs\MicrocontrollerLab\Lab7\Lead_controller_scope_data.csv";
+% raw_scope_data = csvread(path, 2, 0);
+% scope_time = raw_scope_data(:,1);
+% scope_input = raw_scope_data(:,2);
+% scope_output = raw_scope_data(:,3);
+% 
+% %scle and shift the data
+% scope_input = scope_input - min(scope_input);
+% scope_output = scope_output - min(scope_output);
+% %plot raw data
+% figure
+% plot(scope_time, scope_input)
+% hold on
+% plot(scope_time, scope_output)
+% title('Raw scope data')
+% xlabel('Time (s)')
+% ylabel('Voltage(V)')
+% 
+% idx = find(scope_time >= 0 & scope_time <0.227);
+% scope_time = scope_time(idx);
+% scope_input = scope_input(idx);
+% scope_output = scope_output(idx);
+% scope_time_mod = linspace(0, max(scope_time), length(scope_time));
+% model_lead_sys = lsim(sysD_cl_lead, scope_input, scope_time_mod);
+% 
+% %plot the model vs scope data
+% figure
+% plot(scope_time_mod, model_lead_sys)
+% hold on
+% plot(scope_time, scope_output, 'd')
+% title('Comparing the step response of system with lead controller')
