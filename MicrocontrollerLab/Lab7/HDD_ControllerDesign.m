@@ -35,7 +35,8 @@ margin(sysw)
 w = tf('s');
 %control params for lead controller
 a = (1+sind(80))/(1-sind(80));
-wm = 300; %for Lead and PI controller
+Gp_wm = -10*log10(a)
+wm = 185; %for Lead and PI controller
 % wm = 380; %for Lead and Lag controller
 T = 1/(sqrt(a)*wm);
 Gc_lead_w = (1+a*T*w)/(1+T*w);
@@ -52,37 +53,35 @@ title('Step response to system with Lead controller')
 fprintf('Closed loop response to lead controller')
 stepinfo(sysD_cl_lead)
 
+%% read the raw data
+path = "D:\Github\Control-Labs\MicrocontrollerLab\Lab7\Lead_controller_scope_data.csv";
+raw_scope_data = csvread(path, 2, 0);
+scope_time = raw_scope_data(:,1);
+scope_input = raw_scope_data(:,2);
+scope_output = raw_scope_data(:,3);
 
-%% design a lag controller design stacking with the lead controller
-% Gp_mag = 13.9;
-% wg = 41;
-% a = 10^(-Gp_mag/20);
-% T = 10/(wg*a);
-% Gc_lag_w = (1+a*T*w)/(1+T*w)
-% %check bode for the lead and lag controller
-% figure
-% margin(Gc_lag_w*Gc_lead_w*sysw)
-% %check the response
-% Gc_lag_z = c2d(Gc_lag_w, Ts, 'tustin');
-% sysD_cl_lead_lag = feedback(K*Gc_lead_z*Gc_lag_z*ol_sysD, 1);
-% step(sysD_cl_lead_lag)
-% stepinfo(sysD_cl_lead_lag)
-% fprintf('Control equation for Lead Lag controller')
-% K*Gc_lead_z*Gc_lag_z
+%scle and shift the data
+scope_input = scope_input - min(scope_input);
+scope_output = scope_output - min(scope_output);
+%plot raw data
+figure
+plot(scope_time, scope_input)
+hold on
+plot(scope_time, scope_output)
+title('Raw scope data')
+xlabel('Time (s)')
+ylabel('Voltage(V)')
 
-%% design a PI controller to stack with the lead controller the lag controller didn't perform very well
-Gp_mag = 6.72;
-wg = 24;
-Kp = 10^(-Gp_mag/20);
-Ki = Kp*wg/10;
-Gc_PI_w = (Ki+Kp*w)/w;
+idx = find(scope_time >= 0 & scope_time <0.227);
+scope_time = scope_time(idx);
+scope_input = scope_input(idx);
+scope_output = scope_output(idx);
+scope_time_mod = linspace(0, max(scope_time), length(scope_time));
+model_lead_sys = lsim(sysD_cl_lead, scope_input, scope_time_mod);
+
+%plot the model vs scope data
 figure
-margin(Gc_PI_w*Gc_lead_w*sysw) % bode plot for the Lead PI controller
-% title('Bode plot for Lead PI controller')
-Gc_PI_z = c2d(Gc_PI_w, Ts, 'tustin');
-sysD_cl_lead_PI = feedback(Gc_lead_z*Gc_PI_z*ol_sysD, 1);
-figure
-step(sysD_cl_lead_PI)
-fprintf('Closed loop response lead - PI controller')
-stepinfo(sysD_cl_lead_PI)
-Gc_lead_z*Gc_PI_z
+plot(scope_time_mod, model_lead_sys)
+hold on
+plot(scope_time, scope_output, 'd')
+title('Comparing the step response of system with lead controller')
