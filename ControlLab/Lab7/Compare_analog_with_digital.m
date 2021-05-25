@@ -17,7 +17,7 @@ stepinfo(sys)
 grid on
 
 %% plot the raw data
-path = 'D:\Github\Control-Labs\ControlLab\Lab7\digital_proportional_gain_1.25.csv';
+path = 'D:\Github\Control-Labs\ControlLab\Lab7\digital_proportional_gain_1.25_1.csv';
 scope_raw = csvread(path, 2, 0);
 scope_time = scope_raw(:,1);
 scope_input = scope_raw(:,2);
@@ -54,6 +54,8 @@ figure %compare the raw data and modeled response
 plot(model_time, model_response)
 hold on
 plot(scope_time, scope_output, 'd')
+
+legend('Model response', 'Digital controller output', 'Analog controller output')
 title('Comparing the analog model response with digital controller data')
 ylabel('Voltage')
 xlabel('Time')
