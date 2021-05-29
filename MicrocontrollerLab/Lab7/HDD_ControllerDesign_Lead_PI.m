@@ -13,28 +13,27 @@ bode(ol_sys, w)
 title('Open-loop HDD system')
 grid on
 
-figure
-step(ol_sys)
-title('Open-loop response')
+% figure
+% step(ol_sys)
+% title('Open-loop response')
 
-%% check the close loop proportional controller with K=1
-Ts = 1/1e3; %1k Hz samping frequency
+%% check the close loop proportional controller with K=1 (don't need)
+Ts = 1/5e3; %5k Hz samping frequency
 ol_sysD = c2d(ol_sys, Ts, 'ZOH') 
-cl_sysD_pp = feedback(ol_sysD*1, 1)
-fprintf('Closed loop response to proportional controller')
-stepinfo(cl_sysD_pp)
-figure
-step(cl_sysD_pp)
+% fprintf('Closed loop response to proportional controller')
+% stepinfo(cl_sysD_pp)
+% figure
+% step(cl_sysD_pp)
 
 %% Lead controller design
 K = 1; %for running Lead and PI controller
-% K = 3; %for running Lead and Lag controller
 sysw = d2c(K*ol_sysD, 'tustin')  %this is actually the w transform
 figure
 margin(sysw)
 w = tf('s');
-%control params for lead controller
-a = (1+sind(80))/(1-sind(80));
+%control params for lead controller 
+%(I need to slow this down and go easy on lead portion other wise it's going to saturate)
+a = (1+sind(20))/(1-sind(20));
 Gp_wm = -10*log10(a)
 wm = 185; %for Lead and PI controller
 % wm = 380; %for Lead and Lag controller
