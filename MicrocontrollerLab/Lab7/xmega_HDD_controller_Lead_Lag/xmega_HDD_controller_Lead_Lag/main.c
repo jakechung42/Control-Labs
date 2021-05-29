@@ -122,7 +122,7 @@ ISR(TCC1_OVF_vect)
 	
 	// ctrlOut = 0.6297*ctrlOut1 + 0.3691*ctrlOut2 + 25.4*error - 49.86*error1 + 24.47*error2; // Lead Lag controller
     // ctrlOut = 0.7368*ctrlOut1 + 0.2632*ctrlOut2 + 22.52*error - 44.4*error1 + 21.89*error2; // Lead PI controller
-	ctrlOut = 108*error - 107.7*error1 + 0.6509*ctrlOut1; // Lead controller
+	// ctrlOut = 108*error - 107.7*error1 + 0.6509*ctrlOut1; // Lead controller
 	// ctrlOut = ctrlOut1 + 0.1972*error - 0.1972*error1; // PI controller
 
     ctrlOut1 = ctrlOut;
