@@ -384,11 +384,11 @@ ISR(TCC1_OVF_vect)
 	
 	/****** Control Equation ******/
 	
-	ctrlCorrection = -0.01;  // Initial value
- 3d0:	8a e0       	ldi	r24, 0x0A	; 10
- 3d2:	97 ed       	ldi	r25, 0xD7	; 215
- 3d4:	a3 e2       	ldi	r26, 0x23	; 35
- 3d6:	bc eb       	ldi	r27, 0xBC	; 188
+	ctrlCorrection = 0.4;  // Initial value
+ 3d0:	8d ec       	ldi	r24, 0xCD	; 205
+ 3d2:	9c ec       	ldi	r25, 0xCC	; 204
+ 3d4:	ac ec       	ldi	r26, 0xCC	; 204
+ 3d6:	be e3       	ldi	r27, 0x3E	; 62
  3d8:	80 93 16 20 	sts	0x2016, r24	; 0x802016 <ctrlCorrection>
  3dc:	90 93 17 20 	sts	0x2017, r25	; 0x802017 <ctrlCorrection+0x1>
  3e0:	a0 93 18 20 	sts	0x2018, r26	; 0x802018 <ctrlCorrection+0x2>
