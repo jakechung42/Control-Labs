@@ -37,7 +37,7 @@ uint8_t SP_ReadCalibrationByte( uint8_t index );
 // inside the interupt function must be declared as volatile.
 
 /***** Parameters to Change ******/
-volatile float Kp = 1.0;				//Proportional Gain
+volatile float Kp = 5.0;				//Proportional Gain
 volatile float 	Ts = 0.00012500;		//Sample Time set by period of TCC1. Max of 0.00819 with Clk/4
 /*********************************/
 
@@ -110,7 +110,7 @@ ISR(TCC1_OVF_vect)
 	
 	/****** Control Equation ******/
 	
-	ctrlCorrection = -0.2;  // Initial value
+	ctrlCorrection = -0.01;  // Initial value
 	//ctrlCorrection = 0.495;  // Control Correction to Correct the Single ended to Bipolar circuit zero offset
 	// For my circuit the output of the Single ended to Bipolar circuit equaled -0.495 volts
 	// when the control input (ctrlOut = 0.0) equalled 0.
