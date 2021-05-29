@@ -7,11 +7,11 @@ clear
 %% define the ol transfer function
 s = tf('s');
 ol_sys = 1.437e6/(s^3+484.5*s^2+38025*s+2.53e5)
-figure
 w = logspace(0, 3);
-bode(ol_sys, w)
-title('Open-loop HDD system')
-grid on
+% figure
+% bode(ol_sys, w)
+% title('Open-loop HDD system')
+% grid on
 
 % figure
 % step(ol_sys)
@@ -35,8 +35,7 @@ w = tf('s');
 %(I need to slow this down and go easy on lead portion other wise it's going to saturate)
 a = (1+sind(20))/(1-sind(20));
 Gp_wm = -10*log10(a)
-wm = 185; %for Lead and PI controller
-% wm = 380; %for Lead and Lag controller
+wm = 52; %for Lead and PI controller
 T = 1/(sqrt(a)*wm);
 Gc_lead_w = (1+a*T*w)/(1+T*w);
 figure
@@ -52,6 +51,42 @@ title('Step response to system with Lead controller')
 fprintf('Closed loop response to lead controller')
 stepinfo(sysD_cl_lead)
 
+%%compare the step response of Lead controller implementation
+path = "D:\Github\Control-Labs\MicrocontrollerLab\Lab7\Lead_step_response.csv";
+scope_raw = csvread(path, 2, 0);
+scope_time = scope_raw(:,1);
+scope_input = scope_raw(:,2);
+scope_output = scope_raw(:,3);
+
+%shift the raw data to start from zero 
+scope_output = scope_output - min(scope_input) - 0.048; %fine tune the shift with 0.048
+scope_input = scope_input - min(scope_input);
+
+%shift to only consider positive time
+idx = find(scope_time > 0 & scope_time < 0.1);
+scope_time = scope_time(idx);
+scope_input = scope_input(idx);
+scope_output = scope_output(idx);
+
+figure %plot the raw data
+plot(scope_time, scope_input)
+hold on
+plot(scope_time, scope_output)
+
+scope_time_mod_Lead = linspace(min(scope_time), max(scope_time), length(scope_time));
+%don't want to deal with trying to get the sampling time of the scope to match with the sampling time of the model.
+%convert the digital model to continuous model
+sys_cl_lead = d2c(sysD_cl_lead, 'tustin');
+model_lead_response = lsim(sys_cl_lead, scope_input, scope_time_mod_Lead);
+
+figure %compare the scope response and model step response of Lead controller
+plot(scope_time_mod_Lead, model_lead_response)
+hold on
+plot(scope_time, scope_output, '-o')
+plot(scope_time, scope_input, '-o')
+xlabel('Time')
+ylabel('Voltage')
+title('Compare step response of Lead controller')
 
 %% design a lag controller design stacking with the lead controller
 % Gp_mag = 13.9;
