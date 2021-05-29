@@ -45,6 +45,7 @@ subplot(2,1,1)
 semilogx(w/(2*pi), 20*log10(mag_m))
 hold on
 semilogx(freq_raw, 20*log10(mag_raw), 'd')
+title('Bode match with Kp = 7 system')
 ylabel('Magnitude (dB)')
 subplot(2,1,2)
 semilogx(w/(2*pi), phase_m)

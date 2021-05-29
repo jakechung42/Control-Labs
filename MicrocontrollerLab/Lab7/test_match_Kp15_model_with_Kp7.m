@@ -45,7 +45,7 @@ t_step_mod = linspace(min(time_step_scope), max(time_step_scope), length(time_st
 
 %plot the shifted data
 figure 
-plot(time_step_scope, V_in_step_scope, time_step_scope, V_out_step_scope, 'o')
+plot(time_step_scope, V_in_step_scope, time_step_scope, V_out_step_scope, '-')
 title('Raw step data')
 ylabel('Voltage (V)')
 xlabel('Time (s)')
@@ -54,8 +54,8 @@ grid on
 figure
 plot(t_step_model, step_model)
 hold on
-plot(time_step_scope, V_out_step_scope, 'o')
+plot(time_step_scope, V_out_step_scope, '-')
 grid on
 ylabel('Voltage (V)')
 xlabel('Time (s)')
-title('Comparing step response of HDD system with model')
+title('Comparing step response of Kp = 15 model with Kp = 7 step response')

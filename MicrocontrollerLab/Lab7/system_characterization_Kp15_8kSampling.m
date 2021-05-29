@@ -43,6 +43,7 @@ phase_m = squeeze(phase_m);
 figure
 subplot(2,1,1)
 semilogx(w/(2*pi), 20*log10(mag_m))
+title('Bode match with Kp = 15')
 hold on
 semilogx(freq_raw, 20*log10(mag_raw), 'd')
 ylabel('Magnitude (dB)')
@@ -54,45 +55,45 @@ xlabel('Frequency (Hz)')
 ylabel('Phase (degs)')
 
 %% read raw step data
-% path = "D:\Github\Control-Labs\MicrocontrollerLab\Lab7\raw_step_Kp15.csv";
-% raw_step = csvread(path, 2, 0);
-% time_step_scope = raw_step(:,1);
-% V_in_step_scope = raw_step(:,2);
-% V_out_step_scope = raw_step(:,3);
-% 
-% %plot the raw data
-% figure
-% plot(time_step_scope, V_in_step_scope, time_step_scope, V_out_step_scope, 'd')
-% title('Raw step data')
-% ylabel('Voltage (V)')
-% xlabel('Time (s)')
-% grid on
-% 
-% %scale and normalize and shift the data
-% min_vin = min(V_in_step_scope);
-% v_in_amp = max(V_in_step_scope)-min(V_in_step_scope);
-% idx = find(time_step_scope > 0 & time_step_scope < 0.153); %shift time
-% time_step_scope = time_step_scope(idx); 
-% V_in_step_scope = V_in_step_scope(idx);
-% V_in_step_scope = V_in_step_scope - min_vin;
-% V_out_step_scope = V_out_step_scope(idx);
-% V_out_step_scope = (V_out_step_scope - 0.392)/v_in_amp;
-% t_step_mod = linspace(0, max(time_step_scope), length(time_step_scope));
-% step_model = step(model, t_step_mod);
-% %plot the shifted data
-% figure 
-% plot(time_step_scope, V_in_step_scope, time_step_scope, V_out_step_scope, 'd')
-% title('Raw step data')
-% ylabel('Voltage (V)')
-% xlabel('Time (s)')
-% grid on
-% %plot to compare step response of the model and raw data
-% figure
-% plot(t_step_mod, step_model)
-% hold on
-% plot(time_step_scope, V_out_step_scope, 'd')
-% grid on
-% ylabel('Voltage (V)')
-% xlabel('Time (s)')
-% title('Comparing step response of HDD system with model')
+path = "D:\Github\Control-Labs\MicrocontrollerLab\Lab7\raw_step_Kp15.csv";
+raw_step = csvread(path, 2, 0);
+time_step_scope = raw_step(:,1);
+V_in_step_scope = raw_step(:,2);
+V_out_step_scope = raw_step(:,3);
+
+%plot the raw data
+figure
+plot(time_step_scope, V_in_step_scope, time_step_scope, V_out_step_scope, 'd')
+title('Raw step data')
+ylabel('Voltage (V)')
+xlabel('Time (s)')
+grid on
+
+%scale and normalize and shift the data
+min_vin = min(V_in_step_scope);
+v_in_amp = max(V_in_step_scope)-min(V_in_step_scope);
+idx = find(time_step_scope > 0 & time_step_scope < 0.153); %shift time
+time_step_scope = time_step_scope(idx); 
+V_in_step_scope = V_in_step_scope(idx);
+V_in_step_scope = V_in_step_scope - min_vin;
+V_out_step_scope = V_out_step_scope(idx);
+V_out_step_scope = (V_out_step_scope - 0.392)/v_in_amp;
+t_step_mod = linspace(0, max(time_step_scope), length(time_step_scope));
+step_model = step(model, t_step_mod);
+%plot the shifted data
+figure 
+plot(time_step_scope, V_in_step_scope, time_step_scope, V_out_step_scope, 'd')
+title('Raw step data')
+ylabel('Voltage (V)')
+xlabel('Time (s)')
+grid on
+%plot to compare step response of the model and raw data
+figure
+plot(t_step_mod, step_model)
+hold on
+plot(time_step_scope, V_out_step_scope, 'd')
+grid on
+ylabel('Voltage (V)')
+xlabel('Time (s)')
+title('Comparing step response of HDD system with model')
 
