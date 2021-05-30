@@ -27,7 +27,7 @@ A = sys_ss_d.A
 B = sys_ss_d.B
 D = sys_ss_d.C
 
-sim_end = 0.2; %specify number of seconds to run
+sim_end = 0.4; %specify number of seconds to run
 n_steps = sim_end/Ts;
 % n_steps = 10000;
 time    = (0:1:(n_steps-1))*Ts;
@@ -52,17 +52,17 @@ for k= 1:n_steps
     xk = xkp1;
 end
 
-figure
-plot(time,x1_save)
-title('Step response - Open Loop Transfer Function - Recursive')
-xlabel('Time (sec)')
-ylabel('State variable 1')
+% figure
+% plot(time,x1_save)
+% title('Step response - Open Loop Transfer Function - Recursive')
+% xlabel('Time (sec)')
+% ylabel('State variable 1')
 
-figure
-plot(time,x2_save)
-title('Step response - Open Loop Transfer Function - Recursive')
-xlabel('Time (sec)')
-ylabel('State variable 2')
+% figure
+% plot(time,x2_save)
+% title('Step response - Open Loop Transfer Function - Recursive')
+% xlabel('Time (sec)')
+% ylabel('State variable 2')
 
 figure
 plot(time,x3_save)
@@ -149,7 +149,7 @@ for k= 1:n_steps
     % Save data for ploting
     x1_save(k) = xk(1);
     x2_save(k) = xk(2);
-    x3_save(k) = xk(3);
+    x3_save(k) = D(3)*xk(3);
     
     % Recursive calculation of the closed loop response with state feedback
     F0   = 1.0;
@@ -178,7 +178,7 @@ for k= 1:n_steps
     % Save data for ploting
     x1_save(k) = xk1;
     x2_save(k) = xk2;
-    x3_save(k) = xk3;
+    x3_save(k) = D(3)*xk3;
     
     % Recursive calculation of the closed loop response with state feedback
     F0   = 1.0;
@@ -209,7 +209,7 @@ pd_ob=[exp(5*p(1)*Ts) exp(5*p(2)*Ts) exp(5*p(3)*Ts)]; % Digital Observer roots 5
 
 L=place(A',D',pd_ob);
 L=L'
-
+A1 = (A - B*K - L*D);
 % Full order Observer
 
 xkm1_simulation        = zeros(Model_Order,1);
@@ -217,8 +217,8 @@ xo_km1                 = zeros(Model_Order,1);
 Co_km1                 = 0.0;
 Rin(1:n_steps)         = 1.0;  %Step input
 
-noise_C_magnitude = 0.005;                                      % Mesurment noise magnitude
-noise_x1          = noise_C_magnitude*normrnd(0,1,1,n_steps);   % Noise defined as a normal distribution
+noise_C_magnitude = 0.3;                                      % Mesurment noise magnitude
+noise_x3          = noise_C_magnitude*normrnd(0,1,1,n_steps);   % Noise defined as a normal distribution
 
 % Simulate the closed loop response with an observer using recursive equations
 
@@ -230,13 +230,16 @@ for ii=1:n_steps
 
     % Simulation Model (system states estimated from the theoritical model)
     F0            = Rin(ii) - K*xo_km1;  
-    xk_simulation = A*xkm1_simulation + B*F0;
+    xk_simulation = A*xkm1_simulation + B*F0
+    Ck = D*xk_simulation
+
+    Ck_save(ii) = Ck;
     
     % Measurment Simulation (This would be directly measured in the arctual implimentation)
-    Co_k = [(xk_simulation(1) + noise_x1(ii))];  % Note Measurment comes from the simulation here
+    Co_k = [(Ck + noise_x3(ii))];  % Note Measurment comes from the simulation here
 
     % Recursive estimation of the closed loop states using a full order observer
-    xo_k   = (A - B*K - L*D)*xo_km1 + B*Rin(ii) + L*Co_km1;
+    xo_k   = A1*xo_km1 + B*Rin(ii) + L*Co_km1;
     
     % Update the System States
     xo_km1 = xo_k;
@@ -255,10 +258,10 @@ x_simulation_FO_save_M  = cell2mat(x_simulation_FO_save);
 figure
 stairs(step_time_cl,step_pos_cl)
 hold on
-stairs(time,x_simulation_FO_save_M(3,:))
+stairs(time,Ck_save)
 title({'Closed Loop Position step response - No matrix multiplications - Observer','Standard State Space Controller - With Observer'})
 xlabel('Time (sec)')
-ylabel('Position (inch)')
+ylabel('State')
 legend('Step function','Recursive equation - Observer')
 
 figure
