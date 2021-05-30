@@ -1,8 +1,9 @@
-%function to output roots requirements from input T_s, T_r, and Ts (sampling period)
-%T_s: time settle, T_r: time rise.
-%Ts: sampling period
-
 function [root1, root2] = rootsFromTsTr(T_r, T_s, Ts)
+%{
+function to output roots requirements from input T_s, T_r, and Ts (sampling period)
+T_s: time settle, T_r: time rise.
+Ts: sampling period
+%}
     syms wn z
     eq1 = T_r  == (0.8 +2.5*z)/wn;
     eq2 = T_s == 3.2/(z*wn);
