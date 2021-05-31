@@ -38,7 +38,7 @@ void setup()
   analogWriteResolution(12); // Set DA resolution (12 bits)
 
   Max_Voltage = 5.0;   // Maximum Voltage = 5 volts because of the gain of 2 of the power amplifier
-  Kp          = 1.25;   // Proportional control constant
+  Kp          = 1.0;   // Proportional control constant
 }
 
 
