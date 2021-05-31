@@ -266,7 +266,7 @@ ylabel('State')
 legend('Step function','Recursive equation - Observer')
 
 figure
-stairs(time,Co_save)
+stairs(time,x_simulation_FO_save_M(3,:))
 title({'Measurement with noise','Standard State Space Controller - With Observer'})
 
 figure %plot the control signal
@@ -401,8 +401,9 @@ for ii=1:n_steps
     xk_simulation(2) = zz(2);
     xk_simulation(3) = zz(3);
 
+    Ck = D*xk_simulation(1:3,:);
     % Measurment Simulation (This would be directly measured in the actual implimentation)
-    Co_k = [(D(3)*xk_simulation(3) + noise_x1(ii))];  % Note Measurment comes from the simulation here
+    Co_k = [(Ck + noise_x1(ii))];  % Note Measurment comes from the simulation here
 
     %~xk = ~x(k-1) + Rk - Ck
     xk_simulation(4) = xkm1_simulation(4) + (Rin(ii) - Co_k);      % Integrator feedback term
