@@ -655,7 +655,7 @@ END GROUP
  *(.fini0)
                 0x0000148a                _etext = .
 
-.data           0x00802000       0x4e load address 0x0000148a
+.data           0x00802000       0x56 load address 0x0000148a
                 0x00802000                PROVIDE (__data_start, .)
  *(.data)
  .data          0x00802000        0x6 o:/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avrxmega7\libc.a(malloc.o)
@@ -669,57 +669,57 @@ END GROUP
                 0x0080200a                L2
  .data.L1       0x0080200e        0x4 main.o
                 0x0080200e                L1
- .data.K2       0x00802012        0x4 main.o
-                0x00802012                K2
- .data.K1       0x00802016        0x4 main.o
-                0x00802016                K1
- .data.Ki       0x0080201a        0x4 main.o
-                0x0080201a                Ki
- .data.B3       0x0080201e        0x4 main.o
-                0x0080201e                B3
- .data.B2       0x00802022        0x4 main.o
-                0x00802022                B2
- .data.A1_33    0x00802026        0x4 main.o
-                0x00802026                A1_33
- .data.A1_32    0x0080202a        0x4 main.o
-                0x0080202a                A1_32
- .data.A1_31    0x0080202e        0x4 main.o
-                0x0080202e                A1_31
- .data.A1_23    0x00802032        0x4 main.o
-                0x00802032                A1_23
- .data.A1_22    0x00802036        0x4 main.o
-                0x00802036                A1_22
- .data.A1_21    0x0080203a        0x4 main.o
-                0x0080203a                A1_21
- .data.A1_12    0x0080203e        0x4 main.o
-                0x0080203e                A1_12
- .data.A1_11    0x00802042        0x4 main.o
-                0x00802042                A1_11
+ .data.K3       0x00802012        0x4 main.o
+                0x00802012                K3
+ .data.K2       0x00802016        0x4 main.o
+                0x00802016                K2
+ .data.K1       0x0080201a        0x4 main.o
+                0x0080201a                K1
+ .data.Ki       0x0080201e        0x4 main.o
+                0x0080201e                Ki
+ .data.B3       0x00802022        0x4 main.o
+                0x00802022                B3
+ .data.B2       0x00802026        0x4 main.o
+                0x00802026                B2
+ .data.A1_33    0x0080202a        0x4 main.o
+                0x0080202a                A1_33
+ .data.A1_32    0x0080202e        0x4 main.o
+                0x0080202e                A1_32
+ .data.A1_31    0x00802032        0x4 main.o
+                0x00802032                A1_31
+ .data.A1_23    0x00802036        0x4 main.o
+                0x00802036                A1_23
+ .data.A1_22    0x0080203a        0x4 main.o
+                0x0080203a                A1_22
+ .data.A1_21    0x0080203e        0x4 main.o
+                0x0080203e                A1_21
+ .data.A1_13    0x00802042        0x4 main.o
+                0x00802042                A1_13
+ .data.A1_12    0x00802046        0x4 main.o
+                0x00802046                A1_12
+ .data.A1_11    0x0080204a        0x4 main.o
+                0x0080204a                A1_11
  .data.maxVoltage
-                0x00802046        0x4 main.o
-                0x00802046                maxVoltage
- .data.Ts       0x0080204a        0x4 main.o
-                0x0080204a                Ts
+                0x0080204e        0x4 main.o
+                0x0080204e                maxVoltage
+ .data.Ts       0x00802052        0x4 main.o
+                0x00802052                Ts
  *(.gnu.linkonce.d*)
  *(.rodata)
  *(.rodata*)
  *(.gnu.linkonce.r*)
-                0x0080204e                . = ALIGN (0x2)
-                0x0080204e                _edata = .
-                0x0080204e                PROVIDE (__data_end, .)
+                0x00802056                . = ALIGN (0x2)
+                0x00802056                _edata = .
+                0x00802056                PROVIDE (__data_end, .)
 
-.bss            0x0080204e       0x68
-                0x0080204e                PROVIDE (__bss_start, .)
+.bss            0x00802056       0x60
+                0x00802056                PROVIDE (__bss_start, .)
  *(.bss)
  *(.bss*)
- .bss.dacConst  0x0080204e        0x4 main.o
-                0x0080204e                dacConst
- .bss.K3        0x00802052        0x4 main.o
-                0x00802052                K3
- .bss.B1        0x00802056        0x4 main.o
-                0x00802056                B1
- .bss.A1_13     0x0080205a        0x4 main.o
-                0x0080205a                A1_13
+ .bss.dacConst  0x00802056        0x4 main.o
+                0x00802056                dacConst
+ .bss.B1        0x0080205a        0x4 main.o
+                0x0080205a                B1
  .bss.xI_km1    0x0080205e        0x4 main.o
                 0x0080205e                xI_km1
  .bss.x3_km1    0x00802062        0x4 main.o
@@ -766,7 +766,7 @@ END GROUP
                 0x008020b4                __flp
                 0x008020b6                PROVIDE (__bss_end, .)
                 0x0000148a                __data_load_start = LOADADDR (.data)
-                0x000014d8                __data_load_end = (__data_load_start + SIZEOF (.data))
+                0x000014e0                __data_load_end = (__data_load_start + SIZEOF (.data))
 
 .noinit         0x008020b6        0x0
                 [!provide]                PROVIDE (__noinit_start, .)
