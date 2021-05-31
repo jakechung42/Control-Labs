@@ -464,3 +464,33 @@ xlabel('Time (sec)')
 ylabel('Position (inch)')
 legend('Step function (No Observer - all states perfectly known)','Recursive equation - With Observer')
 
+%% read in raw data to compare with scope response
+path = "D:\Github\Control-Labs\MicrocontrollerLab\Lab7\state_space_scope.csv";
+scope_raw = csvread(path, 2, 0);
+scope_time = scope_raw(:,1);
+scope_input = scope_raw(:,2);
+scope_output = scope_raw(:,3);
+
+figure %plot unshifted raw data
+plot(scope_time, scope_input, scope_time, scope_output)
+title('Raw unshifted scope data for state space implementation')
+ylabel('Voltage')
+xlabel('Time')
+
+%shift and scale the data
+v_in_amp = max(scope_input) - min(scope_input);
+idx = find(scope_time > 0 & scope_time < 0.179);
+scope_time = scope_time(idx);
+scope_input = scope_input(idx);
+scope_output = scope_output(idx); %shift the data
+scope_output = scope_output - min(scope_output);
+scope_output = scope_output/v_in_amp; %normalize the data
+
+%plot to compare with step response
+figure
+plot(scope_time, scope_output)
+hold on 
+stairs(step_time_cli,step_pos_cli)
+ylabel('Voltage')
+xlabel('Time')
+title('Comparing the step response of state space implementation')
