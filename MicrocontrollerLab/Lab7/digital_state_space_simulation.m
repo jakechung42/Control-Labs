@@ -132,6 +132,7 @@ design requirements
 T_r = 0.07; %rise time
 a = 2.2/T_r;
 p = [-a -a*2 -a*2.5];
+% p = [-10 -12 -14];
 %==================
 % Convert specified roots to digital roots
 
@@ -293,7 +294,8 @@ xlabel('Time')
 
 % Design the controller
 
-p=[-a -a*1.2 -a*1.3 -a*1.4]; %extra root for the integrator 
+p=[-a -a*3 -a*4 -a*5]; %extra root for the integrator 
+% p = [-10 -12 -14 -16];
 % Convert specified roots to digital roots
 
 pd=[exp(p(1)*Ts) exp(p(2)*Ts) exp(p(3)*Ts) exp(p(4)*Ts)]; % Digital Controller roots
@@ -396,6 +398,7 @@ for ii=1:n_steps
     % Simulation Model (system states estimated from the theoritical model)
     
     F0               =  - K2*[xo_km1(1);xo_km1(2);xo_km1(3)] + K1*xkm1_simulation(4);  
+    % F0 = 0;
     zz               = A*[xkm1_simulation(1);xkm1_simulation(2);xkm1_simulation(3)] + B*F0;
     xk_simulation(1) = zz(1);
     xk_simulation(2) = zz(2);
@@ -406,7 +409,7 @@ for ii=1:n_steps
     Co_k = [(xk_simulation(1) + noise_x1(ii))];  % Note Measurment comes from the simulation here
     
     % Recursive estimation of the closed loop states using a full order observer
-    xo_k   = (A - B*K2 - L*D)*xo_km1 + B*K1*xoI_km1 + L*Co_km1; 
+    xo_k   = A1*xo_km1 + B*K1*xoI_km1 + L*Co_km1; 
     xoI_k   = xoI_km1 + (Rin(ii) - Co_k);
     
     % Update the System States
