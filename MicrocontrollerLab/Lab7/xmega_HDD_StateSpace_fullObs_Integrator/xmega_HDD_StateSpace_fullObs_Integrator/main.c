@@ -54,38 +54,38 @@ volatile float 	maxVoltage = 12.0;		//Maximum Voltage available from power suppl
 volatile float 	ctrlCorrection = 0;		//Control signal Correction to adjust zero value of the Single ended to Bipolar circuit
 
 //State space complete variables and init conds
-volatile float C_k;
-volatile float C_km1 = 0.0;
-volatile float x1_k;
-volatile float x1_km1 = 0.0;
-volatile float x2_k;
-volatile float x2_km1 = 0.0;
-volatile float x3_k;
-volatile float x3_km1 = 0.0;
-volatile float xI_k;
-volatile float xI_km1 = 0.0;
-volatile float rk_m1;
+volatile double C_k;
+volatile double C_km1 = 0.0;
+volatile double x1_k;
+volatile double x1_km1 = 0.0;
+volatile double x2_k;
+volatile double x2_km1 = 0.0;
+volatile double x3_k;
+volatile double x3_km1 = 0.0;
+volatile double xI_k;
+volatile double xI_km1 = 0.0;
+volatile double rk_m1;
 volatile float Rin;
 
 volatile float A1_11 = 0.9264;
 volatile float A1_12 = 0.0002;
 volatile float A1_13 = 0.0;
-volatile float A1_21 = -2.3705;
-volatile float A1_22 = 0.9998;
+volatile float A1_21 = -2.4308;
+volatile float A1_22 = 0.9989;
 volatile float A1_23 = 0.0002;
-volatile float A1_31 = 217.3850;
-volatile float A1_32 = -1.7472;
-volatile float A1_33 = 0.9695;
+volatile float A1_31 = -376.0416;
+volatile float A1_32 = -11.2521;
+volatile float A1_33 = 0.9204;
 
 volatile float B1 = 0.0;
 volatile float B2 = 0.02783;
 volatile float B3 = 273.8451;
 
-volatile float Ki = -0.0003064;
+volatile float Ki = 0.0082;
 
-volatile float K1 = -0.0144;
-volatile float K2 = -0.0201;
-volatile float K3 = -0.0002;
+volatile float K1 = 2.1527;
+volatile float K2 = 0.0146;
+volatile float K3 = 0.0;
 
 volatile float D1 = 1.0;
 volatile float D2 = 0.0;
@@ -157,7 +157,7 @@ ISR(TCC1_OVF_vect)
     State Space equations
     */
 
-    ctrlOut = Ki*xI_k - (K1*x1_k + K2*x2_k + K3*x3_k);
+    ctrlOut = Ki*xI_km1 - (K1*x1_km1 + K2*x2_km1 + K3*x3_km1);
     
 	// ctrlOut = 0.0;        // Set ctrlOut=0 and read the value of the voltage offset at the output of
 	// the Single ended to Bipolar circuit.  In a perfect world this value would be zero.
@@ -199,7 +199,7 @@ ISR(TCC1_OVF_vect)
 
     C_km1 = C_k;
 
-    printf("Rin = %d, C_k = %d, x1_km1 = %d, x2_km1 = %d, ctrlOut = %d\n", (int)(Rin*100), (int)(C_k*100), (int)(x1_km1*100), (int)(x2_km1*100), (int)(ctrlOut*100));
+    // printf("Rin = %d, C_k = %d, x1_km1 = %d, x2_km1 = %d, ctrlOut = %d\n", (int)(Rin*100), (int)(C_k*100), (int)(x1_km1*100), (int)(x2_km1*100), (int)(ctrlOut*100));
 }
 
 
