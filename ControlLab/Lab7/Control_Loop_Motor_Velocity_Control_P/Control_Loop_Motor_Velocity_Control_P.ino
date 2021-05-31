@@ -9,7 +9,7 @@
 ADC *adc = new ADC(); // adc object
 
 unsigned int System_Input, Sensor_Input, Control_Output;
-float Max_Voltage, Kp, System_Input_v, Sensor_Input_v, Error, Control;
+float Max_Voltage, Kp, System_Input_v, Sensor_Input_v, Error, Control, Control_correction;
 
 void setup()
 {
@@ -38,7 +38,8 @@ void setup()
   analogWriteResolution(12); // Set DA resolution (12 bits)
 
   Max_Voltage = 5.0;   // Maximum Voltage = 5 volts because of the gain of 2 of the power amplifier
-  Kp          = 1.0;   // Proportional control constant
+  Kp          = 3.0;   // Proportional control constant
+  Control_correction = 0.22; // Control correction to center the response
 }
 
 
@@ -64,6 +65,7 @@ void loop()
 	  Error   = (System_Input_v - Sensor_Input_v);					      // Error (units are voltage +- 10 volts)     This equation impliments the Feedback
 	  Control = Kp * Error;  						    				              // Control (units are voltage  +- 10 volts)  This equation impliments the control equation
 
+    Control -= Control_correction;    // shift the control signal to center the signal
 	  if(fabs(Control) >= Max_Voltage)								            // Check Maximum voltage
 	  Control = copysign(Max_Voltage,Control);
 
