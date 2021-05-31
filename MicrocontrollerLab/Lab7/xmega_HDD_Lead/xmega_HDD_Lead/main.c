@@ -115,7 +115,7 @@ ISR(TCC1_OVF_vect)
 	
 	/****** Control Equation ******/
 	
-	ctrlCorrection = 0.8;  // Initial value
+	ctrlCorrection = 0.4;  // Initial value
 	// ctrlCorrection = -2.4;  // Control Correction to Correct the Single ended to Bipolar circuit zero offset
 	// For my circuit the output of the Single ended to Bipolar circuit equaled -0.495 volts
 	// when the control input (ctrlOut = 0.0) equalled 0.
