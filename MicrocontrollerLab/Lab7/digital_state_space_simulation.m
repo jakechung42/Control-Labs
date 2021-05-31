@@ -10,8 +10,12 @@ s = tf('s');
 sys_ol = 1.437e6/(s^3+484.5*s^2+38025*s+2.53e5)
 Ts = 1/5e3; %5kHz sampling frequency
 
-sys_ss = ss(sys_ol);                            % Form the continuous state space model
-[sys_ss_d,G] = c2d(sys_ss,Ts,'zoh');            % Convert the state space mode to digital form
+A_cont = [0, 1, 0; 0, 0, 1; -2.53e5 -38025 -484.5];
+B_cont = [0; 0; 1.437e6];
+C_cont = [1 0 0];
+D_cont = 0;
+sys_ss = ss(A_cont, B_cont, C_cont, D_cont);                % Form the continuous state space model
+[sys_ss_d,G] = c2d(sys_ss,Ts,'zoh')             % Convert the state space mode to digital form
                                                 % Note the G term on the output which shows the
                                                 % relationship between the digital states
                                                 % and the original continuous states (very convenient!)
@@ -259,7 +263,7 @@ x_simulation_FO_save_M  = cell2mat(x_simulation_FO_save);
 figure
 stairs(step_time_cl,step_pos_cl)
 hold on
-stairs(time,Ck_save)
+stairs(time,x_simulation_FO_save_M(3,:))
 title({'Closed Loop Position step response - No matrix multiplications - Observer','Standard State Space Controller - With Observer'})
 xlabel('Time (sec)')
 ylabel('State')
@@ -289,7 +293,7 @@ xlabel('Time')
 
 % Design the controller
 
-p=[-a -a*2 -a*2.5 -a*2.8]; %extra root for the integrator 
+p=[-a -a*1.2 -a*1.3 -a*1.4]; %extra root for the integrator 
 % Convert specified roots to digital roots
 
 pd=[exp(p(1)*Ts) exp(p(2)*Ts) exp(p(3)*Ts) exp(p(4)*Ts)]; % Digital Controller roots
@@ -304,7 +308,7 @@ Khat = place(Ahat,Bhat,pd)
 [Khat + [zeros(length(A),1)' 1]]
 AA = [A-eye(size(A)) B;D*A D*B]
 
-KK = [Khat + [zeros(length(A),1)' 1]]*inv([A-eye(size(A)) B;D*A D*B]) %the output of this is [K] and Ki
+KK = [Khat - [zeros(length(A),1)' -1]]*inv([A-eye(size(A)) B;D*A D*B]) %the output of this is [K] and Ki
 K2 = KK(1:end-1) %[K] original
 K1 = KK(end) %Ki for the integrator component
 ACL = [A-B*K2 B*K1;-D*A+D*B*K2 1-D*B*K1]
@@ -359,7 +363,7 @@ title('Step response - assume perfect observer - check integrator implementation
 % pd_ob=[exp(20*p(1)*Ts) exp(20*p(2)*Ts)];   % Digital Observer roots 20* Controller roots
 % pd_ob=[exp(100*p(1)*Ts) exp(100*p(2)*Ts)]; % Digital Observer roots 100* Controller roots
 % p = [-2*a -2.5*a -3*a];
-pb_ob = [exp(20*p(1)*Ts) exp(20*p(2)*Ts) exp(20*p(3)*Ts)]
+pb_ob = [exp(10*p(1)*Ts) exp(10*p(2)*Ts) exp(10*p(3)*Ts)]
 
 L=place(A',D',pd_ob);
 fprintf('\nL matrix with integrator:')
@@ -391,22 +395,15 @@ for ii=1:n_steps
 
     % Simulation Model (system states estimated from the theoritical model)
     
-    %uk = Ki*~xk - [K]*{xk}
-    F0 = -K2*[xo_km1(1);xo_km1(2);xo_km1(3)] + K1*xkm1_simulation(4); %control feedback
-    %{x(k+1)} = [A]{xk} + [B]uk
-    zz = A*[xkm1_simulation(1);xkm1_simulation(2);xkm1_simulation(3)] + B*F0; %process equation
-
-    %rebuilt the vector for observer
+    F0               =  - K2*[xo_km1(1);xo_km1(2);xo_km1(3)] + K1*xkm1_simulation(4);  
+    zz               = A*[xkm1_simulation(1);xkm1_simulation(2);xkm1_simulation(3)] + B*F0;
     xk_simulation(1) = zz(1);
     xk_simulation(2) = zz(2);
     xk_simulation(3) = zz(3);
-
-    Ck = D*xk_simulation(1:3,:);
-    % Measurment Simulation (This would be directly measured in the actual implimentation)
-    Co_k = [(Ck + noise_x1(ii))];  % Note Measurment comes from the simulation here
-
-    %~xk = ~x(k-1) + Rk - Ck
-    xk_simulation(4) = xkm1_simulation(4) + (Rin(ii) - Co_k);      % Integrator feedback term
+    xk_simulation(4) = xkm1_simulation(4) + (Rin(ii) - xkm1_simulation(1));      % Integrator feedback term
+    
+    % Measurment Simulation (This would be directly measured in the arctual implimentation)
+    Co_k = [(xk_simulation(1) + noise_x1(ii))];  % Note Measurment comes from the simulation here
     
     % Recursive estimation of the closed loop states using a full order observer
     xo_k   = (A - B*K2 - L*D)*xo_km1 + B*K1*xoI_km1 + L*Co_km1; 
@@ -449,10 +446,11 @@ xlabel('Time (sec)')
 legend('Simulation','Observer')
 
 figure
-plot(time,x_simulation_FO_save_M(3,:),time,xoI_save(1,:))
+% plot(time,x_simulation_FO_save_M(3,:),time,xoI_save(1,:))
+plot(time,x_simulation_FO_save_M(3,:))
 title('State 3')
 xlabel('Time (sec)')
-legend('Simulation','Observer')
+legend('Simulation')
 
 figure
 stairs(step_time_cli,step_pos_cli)

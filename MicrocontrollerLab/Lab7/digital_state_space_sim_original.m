@@ -425,6 +425,17 @@ legend('Step function (No Observer - all states perfectly known)','Recursive equ
 xlim([0 2]);
 ylim([0 1.2]);
 
+figure
+stairs(step_time_cli,step_pos_cli)
+hold on
+stairs(time,Co_save)
+title({'Closed Loop Position step response','Integrator feedback - recursive equations - With Observer'})
+xlabel('Time (sec)')
+ylabel('Position (inch)')
+legend('Step function (No Observer - all states perfectly known)','Recursive equation - With Observer')
+xlim([0 2]);
+ylim([0 1.2]);
+
 
 
 
