@@ -465,7 +465,7 @@ ylabel('Position (inch)')
 legend('Step function (No Observer - all states perfectly known)','Recursive equation - With Observer')
 
 %% read in raw data to compare with scope response
-path = "D:\Github\Control-Labs\MicrocontrollerLab\Lab7\state_space_scope.csv";
+path = "D:\Github\Control-Labs\MicrocontrollerLab\Lab7\state_space_scope_Tr_0.07.csv";
 scope_raw = csvread(path, 2, 0);
 scope_time = scope_raw(:,1);
 scope_input = scope_raw(:,2);
@@ -473,13 +473,47 @@ scope_output = scope_raw(:,3);
 
 figure %plot unshifted raw data
 plot(scope_time, scope_input, scope_time, scope_output)
-title('Raw unshifted scope data for state space implementation')
+title('Raw unshifted scope data for state space implementation Tr = 0.07')
 ylabel('Voltage')
 xlabel('Time')
 
 %shift and scale the data
 v_in_amp = max(scope_input) - min(scope_input);
 idx = find(scope_time > 0 & scope_time < 0.179);
+scope_time = scope_time(idx);
+scope_input = scope_input(idx);
+scope_output = scope_output(idx); %shift the data
+scope_output = scope_output - min(scope_output);
+scope_output = scope_output/v_in_amp; %normalize the data
+
+scope_time_7 = scope_time;
+scope_output_7 = scope_output;
+
+%plot to compare with step response
+figure
+plot(scope_time, scope_output)
+hold on 
+stairs(step_time_cli,step_pos_cli)
+ylabel('Voltage')
+xlabel('Time')
+title('Comparing the step response of state space implementation Tr = 0.07')
+
+%% read in raw data to compare with scope response
+path = "D:\Github\Control-Labs\MicrocontrollerLab\Lab7\state_space_scope_Tr_0.03.csv";
+scope_raw = csvread(path, 2, 0);
+scope_time = scope_raw(:,1);
+scope_input = scope_raw(:,2);
+scope_output = scope_raw(:,3);
+
+figure %plot unshifted raw data
+plot(scope_time, scope_input, scope_time, scope_output)
+title('Raw unshifted scope data for state space implementation Tr = 0.03')
+ylabel('Voltage')
+xlabel('Time')
+
+%shift and scale the data
+v_in_amp = max(scope_input) - min(scope_input);
+idx = find(scope_time > 0 & scope_time < 0.1132);
 scope_time = scope_time(idx);
 scope_input = scope_input(idx);
 scope_output = scope_output(idx); %shift the data
@@ -493,4 +527,17 @@ hold on
 stairs(step_time_cli,step_pos_cli)
 ylabel('Voltage')
 xlabel('Time')
-title('Comparing the step response of state space implementation')
+title('Comparing the step response of state space implementation Tr = 0.03')
+xlim([0 0.15])
+
+scope_time_3 = scope_time;
+scope_output_3 = scope_output;
+
+%comparing the Tr=0.07 response and Tr=0.03 scope data
+figure
+plot(scope_time_3, scope_output_3)
+hold on
+plot(scope_time_7, scope_output_7)
+title('Comparing the rise time .07 and .03')
+ylabel('Voltage')
+xlabel('Time')
