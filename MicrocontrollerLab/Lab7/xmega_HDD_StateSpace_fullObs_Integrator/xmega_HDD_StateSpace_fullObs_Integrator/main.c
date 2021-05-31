@@ -67,33 +67,33 @@ volatile double xI_km1 = 0.0;
 volatile double rk_m1;
 volatile float Rin;
 
-volatile float A1_11 = 0.1161;
-volatile float A1_12 = 0.00019693;
-volatile float A1_13 = 0.000000016733;
-volatile float A1_21 = -1097;
-volatile float A1_22 = 0.9543;
-volatile float A1_23 = 0.00015138;
-volatile float A1_31 = -395550;
-volatile float A1_32 = -449.3397;
-volatile float A1_33 = 0.5213;
+volatile float A1_11 = 0.7191;
+volatile float A1_12 = 0.0001996;
+volatile float A1_13 = 0.000000018778;
+volatile float A1_21 = -84.3899;
+volatile float A1_22 = 0.9941;
+volatile float A1_23 = 0.0001818;
+volatile float A1_31 = 1181.2;
+volatile float A1_32 = -58.4863;
+volatile float A1_33 = 0.8207;
 
 volatile float B1 = 0.0;
 volatile float B2 = 0.02783;
 volatile float B3 = 273.8451;
 
-volatile float Ki = 15.4853;
+volatile float Ki = 0.2305;
 
-volatile float K1 = 628.0608;
-volatile float K2 = 1.6144;
-volatile float K3 = 0.0014;
+volatile float K1 = 27.8513;
+volatile float K2 = 0.1871;
+volatile float K3 = 0.0003;
 
 volatile float D1 = 1.0;
 volatile float D2 = 0.0;
 volatile float D3 = 0.0;
 
-volatile float L1 = 0.8827;
-volatile float L2 = 1079.5;
-volatile float L3 = 223510;
+volatile float L1 = 0.2808;
+volatile float L2 = 83.6099;
+volatile float L3 = -8856.3;
 
 
 /**********	Precompute some Coefficients ******************/
