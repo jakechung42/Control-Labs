@@ -67,33 +67,33 @@ volatile float xI_km1 = 0.0;
 volatile float rk_m1;
 volatile float Rin;
 
-volatile float A1_11 = 0.9487;
-volatile float A1_12 = -0.0188;
-volatile float A1_13 = 0.0086;
-volatile float A1_21 = 0.0499;
-volatile float A1_22 = 0.9995;
-volatile float A1_23 = -0.0745;
-volatile float A1_31 = 0.0002;
-volatile float A1_32 = 0.0064;
-volatile float A1_33 = 0.9264;
+volatile float A1_11 = 0.9264;
+volatile float A1_12 = 0.0002;
+volatile float A1_13 = 0.0;
+volatile float A1_21 = -2.3705;
+volatile float A1_22 = 0.9998;
+volatile float A1_23 = 0.0002;
+volatile float A1_31 = 217.3850;
+volatile float A1_32 = -1.7472;
+volatile float A1_33 = 0.9695;
 
-volatile float B1 = 0.003049;
-volatile float B2 = 0.00007933;
-volatile float B3 = 0.0000001706;
+volatile float B1 = 0.0;
+volatile float B2 = 0.02783;
+volatile float B3 = 273.8451;
 
-volatile float Ki = 0.0019;
+volatile float Ki = -0.0003064;
 
-volatile float K1 = -13.6961;
-volatile float K2 = -3.1263;
-volatile float K3 = 5.7215;
+volatile float K1 = -0.0144;
+volatile float K2 = -0.0201;
+volatile float K3 = -0.0002;
 
-volatile float D1 = 0.0;
+volatile float D1 = 1.0;
 volatile float D2 = 0.0;
-volatile float D3 = 10.9634;
+volatile float D3 = 0.0;
 
-volatile float L1 = -0.0029;
-volatile float L2 = 0.0067;
-volatile float L3 = 0.0067;
+volatile float L1 = 0.0736;
+volatile float L2 = 2.3660;
+volatile float L3 = -261.6682;
 
 
 /**********	Precompute some Coefficients ******************/
@@ -156,25 +156,9 @@ ISR(TCC1_OVF_vect)
 	/*
     State Space equations
     */
-    xI_k = xI_km1 + Rin - C_k;
-
-    rk_m1 = Ki * xI_km1;
-
-    x1_k = (A1_11*x1_km1 + A1_12*x2_km1 + A1_13*x3_km1) + B1*rk_m1 + L1*C_km1;
-    x2_k = (A1_21*x1_km1 + A1_22*x2_km1 + A1_23*x3_km1) + B2*rk_m1 + L2*C_km1;
-    x3_k = (A1_31*x1_km1 + A1_32*x2_km1 + A1_33*x3_km1) + B3*rk_m1 + L3*C_km1;
 
     ctrlOut = Ki*xI_k - (K1*x1_k + K2*x2_k + K3*x3_k);
     
-    //Update variables
-    x1_km1 = x1_k;
-    x2_km1 = x2_k;
-    x3_km1 = x3_k;
-
-    xI_km1 = xI_k;
-
-    C_km1 = C_k;
-    C_k = position; //encoder data
 	// ctrlOut = 0.0;        // Set ctrlOut=0 and read the value of the voltage offset at the output of
 	// the Single ended to Bipolar circuit.  In a perfect world this value would be zero.
 	// This value is used to calculate ctrlCorrection.  That is ctrlCorrection = -output value.
@@ -190,23 +174,32 @@ ISR(TCC1_OVF_vect)
 	
 	//ctrlDAC = 0;											// Used to check the voltage of the DAC
 
-	
-	// while((DACB.STATUS & DAC_CH0DRE_bm)==0);
-	// DACB.CH0DATA = (int)ctrlDAC;				//Write ctrl signal to DACB channel 0
-	// while((DACB.STATUS & DAC_CH1DRE_bm)==0);
-	// DACB.CH1DATA = (int)positionDAC;					//Write arm position to DACB channel 1
-
 	// flip the order to check channel 0 and channel 1
-	// printf("positionDAC = %d\n", (int)(positionDAC));
 	while((DACB.STATUS & DAC_CH0DRE_bm)==0);
 	DACB.CH0DATA = (int)positionDAC;				//Write arm position to DACB channel 0
 	while((DACB.STATUS & DAC_CH1DRE_bm)==0);
 	DACB.CH1DATA = (int)ctrlDAC;					//Write ctrl signal to DACB channel 1
-
-	
-	// printf("Error = %d, ctrlOut = %d, Position = %d, ctrlDac = %d, PositionDac = %d\n", (int)(error*100), (int)(ctrlOut*100), (int)(position*100), (int)ctrlDAC, (int)positionDAC);
 	
 	PORTD.OUTTGL = (1<<7);	//Toggle Pin D7 for timing
+
+    C_k = position; //encoder data
+
+    x1_k = (A1_11*x1_km1 + A1_12*x2_km1 + A1_13*x3_km1) + B1*Ki*xI_km1 + L1*C_km1;
+    x2_k = (A1_21*x1_km1 + A1_22*x2_km1 + A1_23*x3_km1) + B2*Ki*xI_km1 + L2*C_km1;
+    x3_k = (A1_31*x1_km1 + A1_32*x2_km1 + A1_33*x3_km1) + B3*Ki*xI_km1 + L3*C_km1;
+
+    xI_k = xI_km1 + (Rin - C_k);
+
+    //Update variables
+    x1_km1 = x1_k;
+    x2_km1 = x2_k;
+    x3_km1 = x3_k;
+
+    xI_km1 = xI_k;
+
+    C_km1 = C_k;
+
+    printf("Rin = %d, C_k = %d, x1_km1 = %d, x2_km1 = %d, ctrlOut = %d\n", (int)(Rin*100), (int)(C_k*100), (int)(x1_km1*100), (int)(x2_km1*100), (int)(ctrlOut*100));
 }
 
 
