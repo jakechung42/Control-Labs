@@ -96,7 +96,6 @@ end
 
 function [] = plot_step_compare(system, scope_time, scope_output, data_info)
     %plot to compare step input of system and raw data
-    time = linspace(min(scope_time), max(scope_time), 10000);
     [model_step, time_step] = step(system);
     figure %compare the scope and mode step response
     stairs(time_step, model_step)
