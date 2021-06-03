@@ -88,7 +88,7 @@ void setup()
   Ts_micro = Ts * 1000000.0; //sampling in microseconds
 
   Max_Voltage = 5.0;   // Maximum Voltage = 5 volts because of the gain of 2 of the power amplifier
-  Control_correction = 0.215; // Control correction to center the response
+  Control_correction = 0.0; // Control correction to center the response
   myTimer.begin(ControlLoop, Ts_micro); //control loop to run at 1kHz
 }
 
