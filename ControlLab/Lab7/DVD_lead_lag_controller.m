@@ -55,7 +55,7 @@ stepinfo(sysD_cl_lead)
 %add 40 deg of phase gain
 new_gain_crossover = 265; %deg
 omega_g_lead = 10.3; %rad/s
-a_lag = 10^(-7/20)
+a_lag = 10^(-3/20)
 T_lag = 10/(omega_g_lead*a)
 Gc_lag_w = (1+a_lag*T_lag*w)/(1+T_lag*w)
 
@@ -73,6 +73,33 @@ title('Step response for the lead-lag controller')
 fprintf('Step response of lead lag controller')
 stepinfo(sysD_cl_lead_lag)
 
+%plot the lead-lag response to compare with theoretical data
+%model data
+path = "D:\Github\Control-Labs\ControlLab\Lab7\digital_lead_lag_controller.csv";
+datainfo = "Step response for lead lag controller";
+[scope_time_1, scope_in_1, scope_out_1] = read_step_data(path, datainfo, 1.44, 1.152);
+plot_step_compare(sysD_cl_lead_lag, scope_time_1, scope_out_1, datainfo)
+
+path = "D:\Github\Control-Labs\ControlLab\Lab7\digital_lead_lag_controller_lowInput.csv";
+datainfo = "Step response for lead lag controller with low input";
+[scope_time_2, scope_in_2, scope_out_2] = read_step_data(path, datainfo, 0.29, 02);
+plot_step_compare(sysD_cl_lead_lag, scope_time_2, scope_out_2, datainfo)
+
+%plot to compare the scope data
+figure
+plot(scope_time_2, scope_out_2)
+hold on
+plot(scope_time_1, scope_out_1)
+ylabel('Voltage')
+xlabel('Time')
+title('Comparing different responses of the same controller') 
+
+%read the simulink data
+simulink_data = load('simulink_data_lead_lag.mat');
+%plot the scope data to compare with Simulink data
+plot(simulink_data.ScopeData2(:,1), simulink_data.ScopeData2(:,3))
+legend('Low input', 'High input', 'Simulink data with friction', 'Location', 'SouthEast')
+xlim([0 0.6])
 % %% compare theoretical with scope data 
 % path = "D:\Github\Control-Labs\ControlLab\Lab7\step_lead_controller_DVD.csv";
 % datainfo = "Step response for lead controller";
@@ -133,6 +160,6 @@ function [] = plot_step_compare(system, scope_time, scope_output, data_info)
     plot(scope_time, scope_output)
     ylabel('Voltage')
     xlabel('Time')
-    title_str = "Comparing the step response of model and scope " + data_info
+    title_str = "Comparing the step response of model and scope " + data_info;
     title(title_str)
 end
