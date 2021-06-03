@@ -35,9 +35,9 @@ title('Friction Force (Coulomb)')
 
 
 Ncycles = 5;
-Npoints = 1000;
+Npoints = 100;
 
-Period = 1; 
+Period = 1/6; 
 tend = Ncycles*Period;
 dt   = Period/Npoints;
     
@@ -49,7 +49,7 @@ figure
 plot(ScopeData3(:,1),ScopeData3(:,2))
 hold on
 plot(ScopeData4(:,1),ScopeData4(:,2))
-% legend('Input','Position')
+legend('Input', 'Output')
 title('Open Loop Response')
 
 % Closed Loop response
@@ -68,7 +68,7 @@ sim('Motor_Position_Modelw_friction_6_closed_loop',[0:dt:tend]);
 
 figure
 plot(ScopeData5(:,1),ScopeData5(:,2),ScopeData4(:,1),ScopeData4(:,2))
-% legend('Input','Position')
+legend('Input', 'Output')
 title('Closed Loop Response')
 
 
