@@ -49,14 +49,20 @@ figure %plot the lead controller step response
 step(sysD_cl_lead)
 stepinfo(sysD_cl_lead)
 
-%% compare theoretical with scope data
+%% compare theoretical with scope data 
 path = "D:\Github\Control-Labs\ControlLab\Lab7\step_lead_controller_DVD.csv";
-datainfo = "Step response for lead controller"
-[scope_time, scope_in, scope_out] = read_step_data(path, datainfo, 1.02);
+datainfo = "Step response for lead controller";
+[scope_time, scope_in, scope_out] = read_step_data(path, datainfo, 1.02, 0.229);
+plot_step_compare(sysD_cl_lead, scope_time, scope_out, datainfo)
+
+%% compare theoretical with scope data slow input frequency
+path = "D:\Github\Control-Labs\ControlLab\Lab7\slow_lead_response.csv";
+datainfo = "Step response for lead controller - slow input";
+[scope_time, scope_in, scope_out] = read_step_data(path, datainfo, 0.464, 0.892);
 plot_step_compare(sysD_cl_lead, scope_time, scope_out, datainfo)
 
 %% supporting functions
-function [time, s_in, s_out] = read_step_data(path, data_description, y_shift)
+function [time, s_in, s_out] = read_step_data(path, data_description, y_shift, time_shift)
     %support function to read and output arrays for read csv data
     %path and data_description must be string
     step_raw = csvread(path, 2, 0);
@@ -73,7 +79,7 @@ function [time, s_in, s_out] = read_step_data(path, data_description, y_shift)
     %shift and scale the data
     v_in_amp = max(step_input) - min(step_input);
     min_scope_input = min(step_input);
-    idx = find(step_time>0 & step_time<0.229);
+    idx = find(step_time>0 & step_time<time_shift);
     scope_time = step_time(idx);
     scope_input = step_input(idx);
     scope_output = step_output(idx);
