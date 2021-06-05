@@ -28,33 +28,33 @@ volatile float xI_k;
 volatile float xI_km1 = 0.0;
 volatile float rk_m1;
 
-volatile float A1_11 = 0.8965;
-volatile float A1_12 = 0.00019985;
-volatile float A1_13 = 0.000000019262;
-volatile float A1_21 = -13.8959;
-volatile float A1_22 = 0.9994;
-volatile float A1_23 = 0.00019437;
-volatile float A1_31 = -198.4238;
-volatile float A1_32 = -5.5727;
-volatile float A1_33 = 0.9439;
+volatile float A1_11 = 0.9353;
+volatile float A1_12 = 0.00019999;
+volatile float A1_13 = 0.000000019748;
+volatile float A1_21 = -4.6687;
+volatile float A1_22 = 0.9997;
+volatile float A1_23 = 0.00019623;
+volatile float A1_31 = 58.8189;
+volatile float A1_32 = -2.4970;
+volatile float A1_33 = 0.9623;
 
 volatile float B_1 = 0.0;
 volatile float B_2 = 0.0011;
 volatile float B_3 = 11.4151;
 
-volatile float K_i = 0.0479;
+volatile float K_i = 0.0095;
 
-volatile float K_1 = 19.3998;
-volatile float K_2 = 0.4447;
-volatile float K_3 = 0.0036;
+volatile float K_1 = 5.8030;
+volatile float K_2 = 0.1753;
+volatile float K_3 = 0.002;
 
 volatile float D_1 = 1.0;
 volatile float D_2 = 0.0;
 volatile float D_3 = 0.0;
 
-volatile float L_1 = 0.1035;
-volatile float L_2 = 13.8737;
-volatile float L_3 = -23.0279;
+volatile float L_1 = 0.0647;
+volatile float L_2 = 4.6621;
+volatile float L_3 = -125.0609;
 
 
 void setup()
@@ -88,7 +88,8 @@ void setup()
   Ts_micro = Ts * 1000000.0; //sampling in microseconds
 
   Max_Voltage = 5.0;   // Maximum Voltage = 5 volts because of the gain of 2 of the power amplifier
-  Control_correction = 0.0; // Control correction to center the response
+  // Control_correction = -1.5; // Control correction to center the response
+  
   myTimer.begin(ControlLoop, Ts_micro); //control loop to run at 1kHz
 }
 
@@ -117,11 +118,16 @@ void ControlLoop()
 	// Error   = (System_Input_v - Sensor_Input_v);					      // Error (units are voltage +- 10 volts)     This equation impliments the Feedback
 	Control = K_i*xI_km1 - (K_1*x1_km1 + K_2*x2_km1 + K_3*x3_km1);   // Control (units are voltage  +- 10 volts)  This equation impliments the control equation
 
-    Control -= Control_correction;    // shift the control signal to center the signal
+  Control_correction = -0.215; // Control correction to center the response
+  Serial.print("Control pre shift ");
+  Serial.print(Control);
+  // Control = Control + Control_correction;    // shift the control signal to center the signal
+
+  
 	if(fabs(Control) >= Max_Voltage){
         Control = copysign(Max_Voltage,Control); // Check Maximum voltage
     }								            
-	Control_Output = floor((Control + 10.)*4095./20.);  // Convert control voltage to a digital number for output
+	Control_Output = floor((Control + Control_correction + 10.)*4095./20.);  // Convert control voltage to a digital number for output
 	                                                    // Note the output bipolar range +- 10 Volts is mapped to the digital range 0 to 4095
 	analogWrite(A21,Control_Output);                    // Write digital value (DA)
 
@@ -165,4 +171,7 @@ void ControlLoop()
 
     // Serial.print(", xI_km1 ");
     // Serial.println(xI_km1);
+
+    Serial.print(" Control post shift ");
+    Serial.println(Control);
 }

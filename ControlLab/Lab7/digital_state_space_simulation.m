@@ -129,7 +129,7 @@ legend('Step function','Recursive equation')
 design requirements
 ===================
 %}
-T_r = 0.1; %rise time
+T_r = 0.15; %rise time
 a = 2.2/T_r;
 p = [-a -a*2 -a*2.5];
 % p = [-10 -12 -14];
